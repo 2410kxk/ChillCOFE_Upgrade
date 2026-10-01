@@ -1,0 +1,8 @@
+@model QuanLiQuanCaffee.ViewModels.CafeMenuVm
+@{ ViewData["Title"]="Thực đơn"; }
+<section class="ch-menu-intro"><div class="ch-eyebrow">THE CHILL MENU</div><h1>Hôm nay, bạn uống gì?</h1><p>Chọn hương vị quen thuộc, hoặc thử một điều mới mẻ.</p></section>
+<section class="ch-section ch-catalog" data-catalog><aside class="ch-categories"><span class="ch-eyebrow">DANH MỤC</span><button class="active" data-filter="all">Tất cả món <span>@Model.Products.Count</span></button>
+@foreach(var category in Model.Categories){<button data-filter="@category.CategoryID">@category.Name <span>@Model.Products.Count(p=>p.CategoryID==category.CategoryID)</span></button>}
+<div class="ch-aside-note">Chill theo cách bạn thích.<br><small>Size M / L · Đường · Đá · Topping<br>Tùy chọn tại quầy với món phù hợp.</small></div></aside>
+<div><div class="ch-toolbar"><label class="ch-search"><span>⌕</span><input type="search" data-search placeholder="Tìm món bạn thích…" aria-label="Tìm món"/></label><select data-sort aria-label="Sắp xếp"><option value="default">Theo danh mục</option><option value="asc">Giá tăng dần</option><option value="desc">Giá giảm dần</option></select><span data-count></span></div>
+<div class="ch-product-grid" data-products>@foreach(var product in Model.Products){<partial name="_ChillProduct" model="product"/>}</div><p class="ch-empty" data-empty hidden>Không tìm thấy món phù hợp. Thử tên khác nhé.</p></div></section>

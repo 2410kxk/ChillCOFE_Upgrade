@@ -1,0 +1,282 @@
+[
+  {
+    "category": "Cà phê",
+    "name": "Cà phê đen",
+    "price": 20000,
+    "image": "/images/ca-phe-nong.jpg",
+    "description": "Cà phê đậm vị, hậu đắng nhẹ, dành cho người thích sự nguyên bản.",
+    "custom": true
+  },
+  {
+    "category": "Cà phê",
+    "name": "Cà phê sữa",
+    "price": 25000,
+    "image": "/images/ca-phe-sua-da-viet-nam.jpg",
+    "description": "Cà phê Việt hòa cùng sữa đặc, thơm và béo vừa đủ.",
+    "custom": true
+  },
+  {
+    "category": "Cà phê",
+    "name": "Cà phê muối",
+    "price": 35000,
+    "image": "/images/ca-phe-kem-muoi.jpg",
+    "description": "Cà phê đậm đà dưới lớp kem muối mềm mịn.",
+    "custom": true
+  },
+  {
+    "category": "Cà phê",
+    "name": "Bạc xỉu",
+    "price": 30000,
+    "image": "/images/ly-ca-phe-bac-xiu-da.jpg",
+    "description": "Nhiều sữa, chút cà phê, một lựa chọn nhẹ nhàng.",
+    "custom": true
+  },
+  {
+    "category": "Cà phê",
+    "name": "Cà phê dừa",
+    "price": 39000,
+    "image": "/images/Ca-phe-dua-la-gi.png",
+    "description": "Hương cà phê quyện cùng vị dừa thơm béo.",
+    "custom": true
+  },
+  {
+    "category": "Cà phê",
+    "name": "Americano",
+    "price": 35000,
+    "image": "/images/homemade-Iced-Americano-recipe_5.jpg",
+    "description": "Vị cà phê rõ nét, thanh nhẹ và ít ngọt.",
+    "custom": true
+  },
+  {
+    "category": "Cà phê",
+    "name": "Cappuccino",
+    "price": 45000,
+    "image": "/images/como-hacer-un-capuchino-perfecto-maquina.webp",
+    "description": "Cà phê và sữa với lớp bọt mịn, phục vụ theo khẩu phần chuẩn.",
+    "custom": false
+  },
+  {
+    "category": "Cà phê",
+    "name": "Black Orange",
+    "price": 42000,
+    "image": "/images/blackorange.jpg",
+    "description": "Cà phê kết hợp cam, tươi mới và cân bằng.",
+    "custom": true
+  },
+  {
+    "category": "Trà trái cây",
+    "name": "Trà đào",
+    "price": 39000,
+    "image": "/images/tra dao.jpg",
+    "description": "Trà thơm kết hợp đào, ngọt thanh và dễ uống.",
+    "custom": true
+  },
+  {
+    "category": "Trà trái cây",
+    "name": "Trà táo quế",
+    "price": 39000,
+    "image": "/images/tra tao que.jpg",
+    "description": "Hương táo dịu nhẹ hòa cùng nốt quế ấm áp.",
+    "custom": true
+  },
+  {
+    "category": "Trà trái cây",
+    "name": "Trà ô long",
+    "price": 32000,
+    "image": "/images/tra olong.jpg",
+    "description": "Trà ô long thơm nhẹ, hậu vị thanh.",
+    "custom": true
+  },
+  {
+    "category": "Trà trái cây",
+    "name": "Trà hoa cúc",
+    "price": 35000,
+    "image": "/images/tra hoa cuc.jpg",
+    "description": "Hương hoa dịu nhẹ cho một khoảng nghỉ thư thái.",
+    "custom": true
+  },
+  {
+    "category": "Trà sữa",
+    "name": "Trà sữa ô long",
+    "price": 39000,
+    "image": "/images/tra sua olong.jpg",
+    "description": "Ô long thơm quyện sữa, béo nhẹ và cân bằng.",
+    "custom": true
+  },
+  {
+    "category": "Trà sữa",
+    "name": "Trà sữa matcha",
+    "price": 45000,
+    "image": "/images/tra sua matcha.jpg",
+    "description": "Hương trà xanh với sữa, đắng nhẹ và thơm mát.",
+    "custom": true
+  },
+  {
+    "category": "Trà sữa",
+    "name": "Trà sữa dâu",
+    "price": 42000,
+    "image": "/images/trasuadau.jpg",
+    "description": "Vị dâu ngọt dịu cùng sữa thơm.",
+    "custom": true
+  },
+  {
+    "category": "Trà sữa",
+    "name": "Trà sữa khoai môn",
+    "price": 42000,
+    "image": "/images/khoaimon.png",
+    "description": "Khoai môn thơm béo, sắc tím nhẹ nhàng.",
+    "custom": true
+  },
+  {
+    "category": "Trà sữa",
+    "name": "Trà sữa socola",
+    "price": 45000,
+    "image": "/images/trasuasocola.webp",
+    "description": "Socola đậm vị hòa cùng sữa mềm mịn.",
+    "custom": true
+  },
+  {
+    "category": "Cacao",
+    "name": "Cacao nóng",
+    "price": 35000,
+    "image": "/images/pha-cacaonong.png",
+    "description": "Cacao ấm, đậm đà, phục vụ theo khẩu phần chuẩn.",
+    "custom": false
+  },
+  {
+    "category": "Cacao",
+    "name": "Cacao đá",
+    "price": 39000,
+    "image": "/images/cacdaoda.jpg",
+    "description": "Cacao đậm vị với sữa và đá mát lạnh.",
+    "custom": true
+  },
+  {
+    "category": "Cacao",
+    "name": "Cacao kem muối",
+    "price": 45000,
+    "image": "/images/cacaomuoi.webp",
+    "description": "Cacao thơm đậm dưới lớp kem muối béo nhẹ.",
+    "custom": true
+  },
+  {
+    "category": "Soda",
+    "name": "Soda dâu",
+    "price": 35000,
+    "image": "/images/sodadau.jpg",
+    "description": "Soda sảng khoái kết hợp vị dâu.",
+    "custom": true
+  },
+  {
+    "category": "Soda",
+    "name": "Soda kiwi",
+    "price": 35000,
+    "image": "/images/sodakiwi.jpg",
+    "description": "Kiwi chua nhẹ và soda mát lạnh.",
+    "custom": true
+  },
+  {
+    "category": "Soda",
+    "name": "Soda việt quất",
+    "price": 35000,
+    "image": "/images/pha-soda-viet-quat.jpg",
+    "description": "Hương việt quất tươi mới cùng soda.",
+    "custom": true
+  },
+  {
+    "category": "Soda",
+    "name": "Soda chanh dây",
+    "price": 35000,
+    "image": "/images/soda_chanh_day_6_3754d11c5b.jpg",
+    "description": "Chanh dây chua dịu, thơm và sảng khoái.",
+    "custom": true
+  },
+  {
+    "category": "Soda",
+    "name": "Soda blue",
+    "price": 35000,
+    "image": "/images/sodablue.webp",
+    "description": "Một ly soda xanh mát cho ngày nhiều năng lượng.",
+    "custom": true
+  },
+  {
+    "category": "Nước ép & sinh tố",
+    "name": "Nước ép cam",
+    "price": 39000,
+    "image": "/images/nuoc ep cam.jpg",
+    "description": "Vị cam tươi mát, chua ngọt cân bằng.",
+    "custom": true
+  },
+  {
+    "category": "Nước ép & sinh tố",
+    "name": "Nước ép dưa hấu",
+    "price": 35000,
+    "image": "/images/nuoc ep dua hau.jpg",
+    "description": "Dưa hấu ngọt thanh, nhẹ nhàng và mát lành.",
+    "custom": true
+  },
+  {
+    "category": "Nước ép & sinh tố",
+    "name": "Nước ép dứa",
+    "price": 35000,
+    "image": "/images/nuoc ep dua.jpg",
+    "description": "Hương dứa nhiệt đới, thơm và chua dịu.",
+    "custom": true
+  },
+  {
+    "category": "Nước ép & sinh tố",
+    "name": "Nước ép táo",
+    "price": 39000,
+    "image": "/images/nuoc ep tao.jpg",
+    "description": "Táo thơm nhẹ với vị ngọt thanh.",
+    "custom": true
+  },
+  {
+    "category": "Nước ép & sinh tố",
+    "name": "Sinh tố xoài",
+    "price": 45000,
+    "image": "/images/sinh to xoai.jpg",
+    "description": "Xoài thơm ngọt, xay mịn cùng sữa.",
+    "custom": true
+  },
+  {
+    "category": "Nước ép & sinh tố",
+    "name": "Sinh tố dâu",
+    "price": 45000,
+    "image": "/images/sinh to dau.jpg",
+    "description": "Dâu chua ngọt, sánh mịn và mát lạnh.",
+    "custom": true
+  },
+  {
+    "category": "Bánh ngọt",
+    "name": "Tiramisu",
+    "price": 49000,
+    "image": "/images/banhtiramisu.jpg",
+    "description": "Bánh vị cà phê và cacao, dùng kèm đồ uống yêu thích.",
+    "custom": false
+  },
+  {
+    "category": "Bánh ngọt",
+    "name": "Cheesecake",
+    "price": 45000,
+    "image": "/images/banhcheesecake.jpg",
+    "description": "Bánh phô mai mềm mịn, chua béo nhẹ.",
+    "custom": false
+  },
+  {
+    "category": "Bánh ngọt",
+    "name": "Croissant",
+    "price": 29000,
+    "image": "/images/banhcroissant.jpg",
+    "description": "Bánh sừng bò thơm bơ, lớp vỏ giòn nhẹ.",
+    "custom": false
+  },
+  {
+    "category": "Bánh ngọt",
+    "name": "Mousse socola",
+    "price": 45000,
+    "image": "/images/banhmoussesocola.jpg",
+    "description": "Mousse socola mềm, đậm vị cacao.",
+    "custom": false
+  }
+]

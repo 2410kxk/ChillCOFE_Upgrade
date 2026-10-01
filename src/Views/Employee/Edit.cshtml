@@ -1,0 +1,39 @@
+@model QuanLiQuanCaffee.Models.Employee
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow border-warning">
+            <div class="card-header bg-warning text-dark text-center">
+                <h4>CẬP NHẬT THÔNG TIN</h4>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit">
+                    <input type="hidden" asp-for="EmployeeID" />
+                    <div class="mb-3">
+                        <label class="form-label">Họ và Tên</label>
+                        <input asp-for="FullName" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Vị trí</label>
+                        <select asp-for="Position" class="form-select">
+                            <option value="Pha chế">Pha chế</option>
+                            <option value="Phục vụ">Phục vụ</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Số điện thoại</label>
+                        <input asp-for="Phone" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Lương mỗi giờ (VND)</label>
+                        <input asp-for="HourlyRate" class="form-control" type="number" />
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-grow-1">Cập nhật</button>
+                        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

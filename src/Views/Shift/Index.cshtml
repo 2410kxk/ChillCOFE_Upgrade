@@ -1,0 +1,166 @@
+@model IEnumerable<QuanLiQuanCaffee.Models.Shift>
+
+@{
+    DateTime selectedDate = ViewBag.TargetDate;
+    int diff = (7 + (selectedDate.DayOfWeek - DayOfWeek.Monday)) % 7;
+    DateTime startOfWeek = selectedDate.AddDays(-1 * diff);
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="fw-bold text-danger mb-0">BẢNG PHÂN CA LÀM VIỆC TUẦN - Chill COFÉ</h3>
+        <div>
+            <button class="btn btn-success me-2" onclick="exportSchedule()">
+                <i class="bi bi-download"></i> Tải ảnh gửi NV
+            </button>
+            <input type="date" class="form-control d-inline-block" style="width: 200px;"
+                   value="@selectedDate.ToString("yyyy-MM-dd")"
+                   onchange="window.location.href='?date=' + this.value" />
+        </div>
+    </div>
+
+    <div id="capture-area" class="p-3 bg-white border shadow-sm">
+        <div class="text-center mb-3">
+            <h5 class="fw-bold text-uppercase">Lịch làm việc từ ngày @startOfWeek.ToString("dd/MM") đến @startOfWeek.AddDays(6).ToString("dd/MM")</h5>
+        </div>
+
+        <table class="table table-bordered text-center align-middle" id="scheduleTable">
+            <thead class="table-dark">
+                <tr>
+                    <th style="width: 120px;">CA / THỨ</th>
+                    @for (int i = 0; i < 7; i++)
+                    {
+                        var day = startOfWeek.AddDays(i);
+                        <th>
+                            @System.Globalization.CultureInfo.GetCultureInfo("vi-VN").DateTimeFormat.GetDayName(day.DayOfWeek)<br />
+                            <small class="fw-normal">@day.ToString("dd/MM")</small>
+                        </th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 1; i <= 3; i++)
+                {
+                    var timeRange = i == 1 ? "07:00-12:00" : (i == 2 ? "12:00-17:00" : "17:00-22:00");
+                    <tr>
+                        <td class="bg-light fw-bold">
+                            Ca @i <br />
+                            <small class="text-muted fw-normal">@timeRange</small>
+                        </td>
+                        @for (int d = 0; d < 7; d++)
+                        {
+                            var currentDay = startOfWeek.AddDays(d).Date;
+                            <td class="p-2" style="min-height: 120px; vertical-align: top;">
+                                @* Hiển thị danh sách nhân viên đã được phân *@
+                                <div class="shift-cell-content">
+                                    @foreach (var s in Model.Where(s => s.Date.Date == currentDay && s.ShiftNumber == i))
+                                    {
+                                        var badgeClass = s.Employee.Position == "Pha chế" ? "bg-info" : "bg-warning";
+                                        <div class="badge @badgeClass text-dark p-2 mb-1 d-block text-truncate border" title="@s.Employee.FullName">
+                                            @s.Employee.FullName
+                                        </div>
+                                    }
+                                </div>
+
+                                <button class="btn btn-sm btn-outline-primary mt-1 d-print-none rounded-circle"
+                                        onclick="openAssignModal(@i, '@currentDay.ToString("yyyy-MM-dd")')">
+                                    <i class="bi bi-plus"></i>
+                                </button>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        function exportSchedule() {
+            const area = document.getElementById('capture-area');
+            html2canvas(area, { scale: 2 }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'Lich_Lam_Viec_Pho_Coffe.png';
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+            });
+        }
+
+        async function openAssignModal(shiftNumber, date) {
+            // 1. Gọi API lấy danh sách NV từ EmployeeController
+            const response = await fetch('/Employee/GetEmployeesList');
+            const employees = await response.json();
+
+            // 2. Tạo HTML danh sách nhân viên có checkbox
+            let tableHtml = `
+                <div style="max-height: 400px; overflow-y: auto;">
+                    <table class="table table-sm text-start align-middle">
+                        <thead>
+                            <tr>
+                                <th>Chọn</th>
+                                <th>Họ tên</th>
+                                <th>Vị trí</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${employees.map(e => `
+                                <tr>
+                                    <td><input type="checkbox" class="emp-cb" value="${e.employeeID}" data-role="${e.position}"></td>
+                                    <td>${e.fullName}</td>
+                                    <td><span class="badge ${e.position === 'Pha chế' ? 'bg-info' : 'bg-warning'} text-dark">${e.position}</span></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-start mt-2 small text-muted">
+                    Giới hạn: 2 Pha chế, 3 Phục vụ.
+                </div>
+            `;
+
+            // 3. Hiển thị SweetAlert2
+            const { value: selectedIds } = await Swal.fire({
+                title: 'Phân ca nhân viên',
+                html: tableHtml,
+                showCancelButton: true,
+                confirmButtonText: 'Lưu lịch',
+                cancelButtonText: 'Hủy',
+                preConfirm: () => {
+                    const selected = Array.from(document.querySelectorAll('.emp-cb:checked')).map(cb => ({
+                        id: cb.value,
+                        role: cb.dataset.role
+                    }));
+
+                    if (selected.length === 0) return Swal.showValidationMessage('Vui lòng chọn ít nhất 1 người!');
+
+                    const phaCheCount = selected.filter(x => x.role === 'Pha chế').length;
+                    const phucVuCount = selected.filter(x => x.role === 'Phục vụ').length;
+
+                    if (phaCheCount > 2) return Swal.showValidationMessage('Tối đa 2 Pha chế!');
+                    if (phucVuCount > 3) return Swal.showValidationMessage('Tối đa 3 Phục vụ!');
+
+                    return selected.map(x => x.id);
+                }
+            });
+
+            // 4. Gửi mảng ID về Controller
+            if (selectedIds) {
+                $.post('/Shift/AssignMultipleEmployees', {
+                    empIds: selectedIds,
+                    shiftNum: shiftNumber,
+                    date: date
+                }, function(res) {
+                    if (res.success) {
+                        location.reload();
+                    } else {
+                        Swal.fire('Lỗi', res.message, 'error');
+                    }
+                });
+            }
+        }
+    </script>
+}

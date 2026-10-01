@@ -1,0 +1,10 @@
+@model QuanLiQuanCaffee.Models.Product
+@{ViewData["Title"]="Thêm món";}
+<section class="ch-section" style="max-width:720px"><a class="ch-back" href="/CatalogAdmin">← Quản lý thực đơn</a><h1>Thêm món</h1>
+<form asp-action="Create" method="post" enctype="multipart/form-data"><div asp-validation-summary="All" class="text-danger"></div><input type="hidden" asp-for="ProductID"/>
+<div class="ch-field"><label asp-for="Name">Tên món</label><input asp-for="Name" maxlength="120" required/></div>
+<div class="ch-field-row"><div class="ch-field"><label asp-for="Price">Giá size M (đ)</label><input asp-for="Price" type="number" min="0" max="10000000" required/></div><div class="ch-field"><label asp-for="CategoryID">Danh mục</label><select asp-for="CategoryID" asp-items="ViewBag.CategoryID"></select></div></div>
+<div class="ch-field"><label asp-for="Description">Mô tả</label><textarea asp-for="Description" class="form-control" rows="3" maxlength="1000"></textarea></div>
+<div class="ch-field"><label for="imageFile">Ảnh món (tối đa 5 MB)</label><input type="file" name="imageFile" id="imageFile" accept=".jpg,.jpeg,.png,.webp,.avif"/></div>
+<label class="ch-check"><input asp-for="SupportsCustomization"/> Cho phép chọn size, đường, đá và topping</label>
+<button class="ch-button" type="submit">Lưu món</button></form></section>

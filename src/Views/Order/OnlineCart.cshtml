@@ -1,0 +1,110 @@
+@model IEnumerable<QuanLiQuanCaffee.Models.OrderDetail>
+
+@{
+    ViewData["Title"] = "Giỏ hàng Online";
+}
+
+<div class="container mt-5">
+    <h2 class="fw-bold mb-4 text-center">🛒 Giỏ hàng của bạn</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info text-center shadow-sm">
+            Giỏ hàng đang trống.
+            <a href="/Product/Menu" class="fw-bold text-decoration-none">Quay lại thực đơn</a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+
+            <!-- LEFT: DANH SÁCH MÓN -->
+            <div class="col-md-8">
+                <div class="card shadow-sm border-0 rounded-4">
+                    <div class="card-body">
+
+                        @foreach (var item in Model)
+                        {
+                            <div class="d-flex justify-content-between align-items-center border-bottom py-3">
+
+                                <!-- Tên + giá -->
+                                <div>
+                                    <h6 class="fw-bold mb-1">@item.Product?.Name</h6>
+                                    <small class="text-muted">@item.Price.ToString("N0")đ</small>
+                                </div>
+
+                                <!-- Số lượng -->
+                                <div class="d-flex align-items-center">
+                                    <button class="btn btn-sm btn-outline-secondary rounded-circle"
+                                            onclick="updateQty(@item.ProductID, -1)">
+                                        ➖
+                                    </button>
+
+                                    <span class="mx-3 fw-bold">@item.Quantity</span>
+
+                                    <button class="btn btn-sm btn-outline-secondary rounded-circle"
+                                            onclick="updateQty(@item.ProductID, 1)">
+                                        ➕
+                                    </button>
+                                </div>
+
+                                <!-- Thành tiền -->
+                                <div class="fw-bold text-danger">
+                                    @((item.Price * item.Quantity).ToString("N0"))đ
+                                </div>
+
+                                <!-- Xóa -->
+                                <button class="btn btn-sm btn-outline-danger rounded-circle"
+                                        onclick="removeItem(@item.ProductID)">
+                                    ✕
+                                </button>
+
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: THANH TOÁN -->
+            <div class="col-md-4">
+                <div class="card shadow border-0 rounded-4">
+                    <div class="card-body">
+
+                        <h5 class="fw-bold mb-3">🧾 Tóm tắt đơn hàng</h5>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tổng tiền:</span>
+                            <span class="fw-bold text-danger fs-5">
+                                @Model.Sum(x => x.Price * x.Quantity).ToString("N0")đ
+                            </span>
+                        </div>
+
+                        <hr />
+
+                        <a href="/Order/OnlineCheckout"
+                           class="btn btn-success w-100 py-3 fw-bold rounded-pill shadow-sm">
+                            🚀 TIẾN HÀNH ĐẶT HÀNG
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
+
+<script>
+    function updateQty(id, delta) {
+        $.post('/Order/UpdateQuantity', { id: id, delta: delta }, function () {
+            location.reload();
+        });
+    }
+
+    function removeItem(id) {
+        $.post('/Order/UpdateQuantity', { id: id, delta: -999 }, function () {
+            location.reload();
+        });
+    }
+</script>

@@ -1,0 +1,176 @@
+@model IEnumerable<QuanLiQuanCaffee.Models.Order>
+
+@{
+    ViewData["Title"] = "Quản lý đơn hàng";
+}
+
+<div class="card shadow border-0">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">DANH SÁCH ĐƠN HÀNG</h5>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Mã ĐH</th>
+                    <th>Thời gian</th>
+                    <th>Bàn / Khách hàng</th>
+                    <th>Trạng thái</th>
+                    <th class="text-center">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>#@item.OrderID</td>
+                        <td>@item.OrderTime.ToString("dd/MM HH:mm")</td>
+                        <td>
+                            @if (item.Status == "Online")
+                            {
+                                <span>👤 @item.CustomerName (@item.Phone)</span>
+                            }
+                            else
+                            {
+                                <span>🪑 Bàn @item.TableID</span>
+                            }
+                        </td>
+                        <td>
+                            <span class="badge @(item.Status == "Đã thanh toán" ? "bg-success" : (item.Status == "Online" ? "bg-info" : "bg-warning text-dark"))">
+                                @item.Status
+                            </span>
+                        </td>
+                        <td class="text-center">
+                            <button onclick="viewOrderDetails(@item.OrderID)" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> Chi tiết
+                            </button>
+
+                            @if (item.Status == "Online")
+                            {
+                                <button onclick="confirmPayment(@item.OrderID)" class="btn btn-sm btn-success ms-1">
+                                    <i class="bi bi-check-circle"></i> Thanh toán
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="orderModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">CHI TIẾT ĐƠN HÀNG <span id="md-order-id"></span></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <p class="mb-1"><strong>Khách hàng:</strong> <span id="md-customer"></span></p>
+                        <p class="mb-1"><strong>Thời gian:</strong> <span id="md-time"></span></p>
+                    </div>
+                    <div class="col-6 text-end">
+                        <p class="mb-1"><strong>Địa chỉ:</strong> <span id="md-address"></span></p>
+                        <p class="mb-1"><strong>Trạng thái:</strong> <span id="md-status" class="badge bg-secondary"></span></p>
+                    </div>
+                </div>
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Tên món</th>
+                            <th class="text-center">SL</th>
+                            <th class="text-end">Đơn giá</th>
+                            <th class="text-end">Thành tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody id="md-items">
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="3" class="text-end">TỔNG CỘNG:</th>
+                            <th class="text-end text-danger fs-5" id="md-total"></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-success" onclick="window.print()">
+                    <i class="bi bi-printer"></i> In hóa đơn
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        /**
+         * Lấy dữ liệu chi tiết đơn hàng qua AJAX
+         */
+        function viewOrderDetails(orderId) {
+            fetch(`/Order/GetOrderDetailsJson/${orderId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Không thể kết nối đến máy chủ');
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success === false) {
+                        alert(data.message);
+                        return;
+                    }
+
+                    // Đổ thông tin chung vào Modal
+                    document.getElementById('md-order-id').innerText = '#' + data.orderId;
+                    document.getElementById('md-customer').innerText = data.customer;
+                    document.getElementById('md-time').innerText = data.time;
+                    document.getElementById('md-address').innerText = data.address;
+                    document.getElementById('md-status').innerText = data.status;
+                    document.getElementById('md-total').innerText = data.totalAmount.toLocaleString('vi-VN') + 'đ';
+
+                    // Đổ danh sách sản phẩm
+                    let html = '';
+                    data.details.forEach(item => {
+                        html += `
+                            <tr>
+                                <td>${item.productName}</td>
+                                <td class="text-center">${item.quantity}</td>
+                                <td class="text-end">${item.price.toLocaleString('vi-VN')}đ</td>
+                                <td class="text-end fw-bold">${item.total.toLocaleString('vi-VN')}đ</td>
+                            </tr>`;
+                    });
+                    document.getElementById('md-items').innerHTML = html;
+
+                    // Hiển thị Modal bằng Bootstrap 5
+                    var modalElement = document.getElementById('orderModal');
+                    var myModal = new bootstrap.Modal(modalElement);
+                    myModal.show();
+                })
+                .catch(error => {
+                    console.error('Fetch Error:', error);
+                    alert('Lỗi: Không thể lấy chi tiết đơn hàng!');
+                });
+        }
+
+        /**
+         * Xác nhận thanh toán đơn hàng Online
+         */
+        function confirmPayment(orderId) {
+            if (confirm(`Xác nhận đơn hàng #${orderId} đã thanh toán và thu tiền?`)) {
+                $.post('/Order/ConfirmOnlinePayment', { orderId: orderId }, function (res) {
+                    if (res.success) {
+                        alert("Đã xác nhận thanh toán! Đơn hàng đã được cộng vào doanh thu.");
+                        location.reload();
+                    } else {
+                        alert(res.message || "Có lỗi xảy ra.");
+                    }
+                }).fail(function () {
+                    alert("Lỗi kết nối server!");
+                });
+            }
+        }
+    </script>
+}

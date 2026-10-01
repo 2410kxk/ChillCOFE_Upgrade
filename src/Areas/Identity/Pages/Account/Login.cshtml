@@ -1,0 +1,31 @@
+@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Welcome to Chill COFÉ";
+}
+
+<h1>@ViewData["Title"]</h1>
+<div class="row">
+    
+    <div class="card shadow-lg p-4" style="max-width:400px;margin:auto">
+        <h3 class="text-center text-danger">ĐĂNG NHẬP</h3>
+
+        <form method="post">
+            <input asp-for="Input.Email" class="form-control mb-3" placeholder="Email" />
+            <input asp-for="Input.Password" type="password" class="form-control mb-3" placeholder="Mật khẩu" />
+
+            <button class="btn btn-danger w-100">Đăng nhập</button>
+        </form>
+
+        <p class="text-center mt-3">
+            Chưa có tài khoản?
+            <a href="/Account/Register">Đăng ký</a>
+        </p>
+    </div>
+   
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

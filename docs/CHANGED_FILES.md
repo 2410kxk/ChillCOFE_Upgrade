@@ -1,0 +1,26 @@
+# File mới hoặc thay đổi
+
+- Controllers/CafeController.cs
+- Controllers/CatalogAdminController.cs
+- Controllers/HomeController.cs
+- Controllers/OrderController.cs
+- Controllers/PosController.cs
+- Controllers/ProductController.cs
+- Models/Category.cs
+- Models/OrderDetail.cs
+- Models/Product.cs
+- Models/Table.cs
+- ViewModels/CafeViewModels.cs
+- Views/Cafe/Menu.cshtml
+- Views/CatalogAdmin/Index.cshtml
+- Views/Home/Index.cshtml
+- Views/Pos/Index.cshtml
+- Views/Pos/Receipt.cshtml
+- Views/Pos/Tables.cshtml
+- Views/Product/Create.cshtml
+- Views/Product/Details.cshtml
+- Views/Product/Edit.cshtml
+- Views/Shared/_ChillProduct.cshtml
+- Views/Shared/_Layout.cshtml
+- wwwroot/css/chill.css
+- wwwroot/js/chill.js

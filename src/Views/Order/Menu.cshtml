@@ -1,0 +1,105 @@
+@model IEnumerable<QuanLiQuanCaffee.Models.Product>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-7 border-end" style="height: 80vh; overflow-y: auto;">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <h4 class="fw-bold">📍 Bàn: @ViewBag.TableName</h4>
+                <div id="msg-area" style="display:none;"></div>
+                <input type="text" id="searchMenu" class="form-control w-50 rounded-pill" placeholder="Tìm món nhanh...">
+            </div>
+
+            <div class="row g-3">
+                @foreach (var item in Model)
+                {
+                    <div class="col-6 col-lg-4 product-item">
+                        <div class="card h-100 border-0 shadow-sm" style="cursor:pointer; transition: 0.2s;">
+                            <div class="card-body text-center">
+                                <div class="fs-2">☕</div>
+                                <h6 class="fw-bold mb-1">@item.Name</h6>
+                                <p class="text-danger fw-bold m-0">@item.Price.ToString("N0")đ</p>
+                                <button class="btn btn-dark w-100 rounded-pill" onclick="addToCart(@item.ProductID)">
+                                    + Thêm món
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="col-md-5 bg-white shadow-sm p-3 rounded-3" style="height: 80vh; display: flex; flex-direction: column;">
+            <h5 class="fw-bold border-bottom pb-2">🛒 Đơn hàng: @ViewBag.TableName</h5>
+
+            <div id="sidebar-cart-content" style="flex-grow: 1; overflow-y: auto;">
+                <p class="text-center text-muted mt-5">Đang tải giỏ hàng...</p>
+            </div>
+
+            <div class="border-top pt-3">
+                <button class="btn btn-success w-100 py-3 fw-bold rounded-pill" data-bs-toggle="modal" data-bs-target="#checkoutModal">
+                    💳 THANH TOÁN NGAY
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="checkoutModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-body p-4 text-center">
+                <h4 class="fw-bold mb-4">Chọn phương thức thanh toán</h4>
+                <div class="row g-3">
+                    <div class="col-6">
+                        <button class="btn btn-outline-primary w-100 py-4" onclick="confirmPOSPayment('Tiền mặt')">
+                            <div class="fs-1">💵</div> Tiền mặt
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button class="btn btn-outline-info w-100 py-4" onclick="confirmPOSPayment('Chuyển khoản')">
+                            <div class="fs-1">💳</div> Chuyển khoản
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        // Hàm chính để thêm món
+       
+
+        // Hàm nạp lại vùng Sidebar
+        function loadSidebar() {
+            // Nạp nội dung từ Action GetCartPartial vào vùng chứa Sidebar
+            $('#sidebar-cart-content').load('/Order/GetCartSidebar', function() {
+                // Sau khi load xong, nếu có dòng "Chưa có món nào" thì ẩn nó đi
+                if ($('#sidebar-cart-content').children().length > 0){
+                    $('.text-muted.text-center.mt-5').hide();
+                }
+            });
+        }
+                function confirmPOSPayment(method) {
+            $.post("/Order/ConfirmCheckout", { paymentMethod: method }, function(res) {
+                if (res.success) {
+                    Swal.fire('Thành công!', 'Hóa đơn đã được xử lý.', 'success')
+                        .then(() => { window.location.href = "/Order/Tables"; });
+                } else {
+                    Swal.fire('Lỗi', res.message, 'error');
+                }
+            }).fail(function(xhr) {
+                Swal.fire('Chưa thanh toán', xhr.responseJSON?.message || 'Yêu cầu không thành công. Hãy tải lại và kiểm tra trạng thái đơn.', 'error');
+            });
+        }
+        // Xử lý tìm kiếm món nhanh (Nếu bạn muốn dùng input searchMenu)
+        $("#searchMenu").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $(".product-item").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    </script>
+ }
+ 

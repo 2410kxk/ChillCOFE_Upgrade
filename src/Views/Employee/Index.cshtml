@@ -1,0 +1,93 @@
+@model IEnumerable<QuanLiQuanCaffee.Models.Employee>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="fw-bold text-danger">DANH SÁCH NHÂN VIÊN</h2>
+        <a asp-action="Create" class="btn btn-primary shadow-sm">
+            <i class="bi bi-person-plus-fill"></i> Thêm mới
+        </a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="ps-3">Họ và Tên</th>
+                        <th>Số điện thoại</th>
+                        <th>Chức vụ</th>
+                        <th>Email</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold ps-3">@item.FullName</td>
+                                <td>@item.Phone</td>
+                                <td>
+                                    @if (item.Position == "Pha chế")
+                                    {
+                                        <span class="badge bg-info text-dark">Pha chế</span>
+                                    }
+                                    else if (item.Position == "Phục vụ")
+                                    {
+                                        <span class="badge bg-warning text-dark">Phục vụ</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">@item.Position</span>
+                                    }
+                                </td>
+                                <td>@item.Email</td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <a asp-action="Edit" asp-route-id="@item.EmployeeID" class="btn btn-sm btn-outline-warning" title="Sửa">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a asp-action="Details" asp-route-id="@item.EmployeeID" class="btn btn-sm btn-outline-info" title="Chi tiết">
+                                            <i class="bi bi-info-circle"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.EmployeeID" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">
+                                <em>Chưa có dữ liệu nhân viên nào trong hệ thống.</em>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@* Thay vì dùng @section Styles, hãy viết trực tiếp *@
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+<style>
+    .table thead th {
+        border: none;
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .badge {
+        font-size: 0.85rem;
+        padding: 0.5em 0.8em;
+    }
+</style>

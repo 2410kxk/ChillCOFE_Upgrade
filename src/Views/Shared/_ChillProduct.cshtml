@@ -1,0 +1,8 @@
+@model QuanLiQuanCaffee.Models.Product
+<article class="ch-product" data-name="@Model.Name" data-category="@Model.CategoryID" data-price="@Model.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)" data-available="@Model.IsAvailable.ToString().ToLowerInvariant()">
+<div class="ch-product-image"><img src="@(string.IsNullOrWhiteSpace(Model.ImageUrl) ? "/images/ca-phe-kem-muoi.jpg" : Model.ImageUrl)" alt="@Model.Name" loading="lazy"/>
+@if(!Model.IsAvailable){<span class="ch-badge sold">Tạm hết</span>}</div>
+<div class="ch-product-info"><span class="ch-category">@Model.Category?.Name</span><h3>@Model.Name</h3><p>@Model.Description</p><div class="ch-product-bottom"><strong>@Model.Price.ToString("N0") <small>đ</small></strong>
+@if(ViewData["Pos"] is true){<button class="ch-add" type="button" data-pick="@Model.ProductID" disabled="@(!Model.IsAvailable)" aria-label="Chọn @Model.Name">+</button>}
+else{<a class="ch-add" href="/Product/Details/@Model.ProductID" aria-label="Xem @Model.Name">↗</a>}
+</div></div></article>

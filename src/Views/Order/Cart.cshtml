@@ -1,0 +1,124 @@
+@model List<QuanLiQuanCaffee.Models.OrderDetail>
+
+<h2 class="text-center mt-3">🛒 Giỏ hàng</h2>
+
+@if (Model == null || Model.Count == 0)
+{
+    <p class="text-center text-danger">Giỏ hàng trống</p>
+}
+else
+{
+    <table class="table table-bordered text-center">
+        <thead class="table-dark">
+            <tr>
+                <th>Tên món</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Thành tiền</th>
+                <th></th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @{
+                double total = 0;
+            }
+
+            @foreach (var item in Model)
+            {
+                var thanhTien = item.Price * item.Quantity;
+                total += thanhTien;
+
+                <tr>
+                    <td>@item.Product.Name</td>
+
+                    <td>@item.Price VNĐ</td>
+
+                    <!-- 🔥 TĂNG GIẢM -->
+                    <td>
+                        <button class="btn btn-sm btn-danger btn-minus"
+                                data-id="@item.DetailID">
+                            -
+                        </button>
+
+                        <span class="mx-2">@item.Quantity</span>
+
+                        <button class="btn btn-sm btn-success btn-plus"
+                                data-id="@item.DetailID">
+                            +
+                        </button>
+                    </td>
+
+                    <td>@thanhTien VNĐ</td>
+
+                    <!-- ❌ XÓA -->
+                    <td>
+                        <button class="btn btn-sm btn-warning btn-remove"
+                                data-id="@item.DetailID">
+                            Xóa
+                        </button>
+                    </td>
+                </tr>
+            }
+
+            <!-- 🔥 TỔNG TIỀN -->
+            <tr>
+                <td colspan="3"><b>Tổng tiền</b></td>
+                <td colspan="2" class="text-danger">
+                    <b>@total VNĐ</b>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="text-end">
+        <button class="btn btn-primary">Thanh toán</button>
+    </div>
+}
+
+@section Scripts {
+    <script>
+         $(".btn-add").click(function () {
+
+            var id = $(this).data("id");
+
+            $.post("/Order/AddToCart", { id: id }, function () {
+
+                var count = $("#cart-count").text();
+                count = parseInt(count) + 1;
+
+                $("#cart-count").text(count);
+            });
+        });
+                $.get("/Order/GetCartCount", function (res) {
+            $("#cart-count").text(res);
+        });
+        // ➕ TĂNG
+        $(".btn-plus").click(function () {
+            var id = $(this).data("id");
+
+            $.post("/Order/Increase", { detailId: id }, function () {
+                location.reload();
+            });
+        });
+
+        // ➖ GIẢM
+        $(".btn-minus").click(function () {
+            var id = $(this).data("id");
+
+            $.post("/Order/Decrease", { detailId: id }, function () {
+                location.reload();
+            });
+        });
+
+        // ❌ XÓA
+        $(".btn-remove").click(function () {
+            var id = $(this).data("id");
+
+            $.post("/Order/Remove", { detailId: id }, function () {
+                location.reload();
+            });
+        });
+
+    </script>
+}

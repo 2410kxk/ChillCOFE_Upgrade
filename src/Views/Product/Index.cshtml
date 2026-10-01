@@ -1,0 +1,109 @@
+@model IEnumerable<Product>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>MENU QUÁN</h2>
+
+    @if (User.IsInRole("Admin"))
+    {
+        <a href="/Product/Create" class="btn btn-success">
+            + Thêm món
+        </a>
+    }
+</div>
+@if (ViewBag.Search != null)
+{
+    <h4 class="text-center text-danger mt-3">
+        Kết quả tìm: "@ViewBag.Search"
+    </h4>
+}
+@if (ViewBag.CategoryName != null)
+{
+    <h2 class="text-center mt-4 fw-bold" style="color:#8B0000;">
+    🍹 @ViewBag.CategoryName
+</h2>
+}
+<div id="msg-area"></div>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-3">
+            <div class="card mb-4 shadow-sm">
+                <img src="@item.ImageUrl" class="card-img-top" style="height:200px; object-fit:cover;">
+
+                <div class="card-body text-center">
+                    <h5 class="card-title">@item.Name</h5>
+
+                    <p class="text-danger fw-bold">
+                        @item.Price VNĐ
+                    </p>
+
+                    <p class="text-muted">
+                        @item.Category?.Name
+                    </p>
+
+                    <!-- ✅ NÚT THÊM ĐÚNG -->
+                    <button class="btn btn-success btn-add"
+                            data-id="@item.ProductID">
+                        Thêm
+                    </button>
+
+                    <br /><br />
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <hr />
+                        <div class="d-flex justify-content-around">
+                            <a asp-action="Edit" asp-route-id="@item.ProductID" class="btn btn-sm btn-outline-primary">Sửa</a>
+                            <a asp-action="Delete" asp-route-id="@item.ProductID" class="btn btn-sm btn-outline-danger">Xóa</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            $(".btn-add").click(function () {
+
+                var btn = $(this);
+                var productId = btn.data("id");
+
+                $.ajax({
+                    url: '/Order/AddToCart',
+                    type: 'POST',
+                    data: { id: productId },
+
+                    success: function () {
+
+                        // ❌ Xóa thông báo cũ
+                        $("#msg-area").html("");
+
+                        // ✅ Hiện thông báo mới
+                        $("#msg-area").html(
+                            "<div class='alert alert-success text-center'>Đã thêm món!</div>"
+                        );
+
+                        // ⏳ Tự ẩn sau 2 giây
+                        setTimeout(function () {
+                            $("#msg-area").fadeOut();
+                        }, 2000);
+
+                        // 🔥 đổi nút
+                        btn.text("✔ Đã thêm");
+                        btn.removeClass("btn-success").addClass("btn-secondary");
+
+                    },
+
+                    error: function () {
+                        alert("Lỗi!");
+                    }
+                });
+
+            });
+
+        });
+    </script>
+}

@@ -1,0 +1,12 @@
+@model IEnumerable<QuanLiQuanCaffee.Models.Product>
+@{ ViewData["Title"] = "Một khoảng bình yên"; }
+<section class="ch-hero"><div class="ch-hero-copy"><div class="ch-eyebrow"><span class="ch-dot"></span> CHẬM MỘT NHỊP, CHILL MỘT CHÚT</div>
+<h1>Ngày đẹp hơn,<br>từ một ly <em>chill.</em></h1><p>Cà phê đậm vị, trà thơm mát và những món uống dành cho khoảng nghỉ nhỏ của bạn.</p>
+<div class="ch-actions"><a class="ch-button" href="/Cafe/Menu">Khám phá thực đơn <span>↗</span></a><a class="ch-text-link" href="#favorites">Hôm nay uống gì? ↓</a></div>
+<div class="ch-hero-note"><span>01 /</span> CHỌN MÓN BẠN THÍCH. TẬN HƯỞNG THEO CÁCH CỦA BẠN.</div></div>
+<div class="ch-hero-photo"><img src="/images/ca-phe-kem-muoi.jpg" alt="Cà phê kem muối với lớp kem mềm"/><div class="ch-photo-tag">Cà phê kem muối <span>Đậm vị cà phê, mềm vị kem.</span></div><div class="ch-stamp">SIP SLOW<br>FEEL GOOD</div></div></section>
+<div class="ch-marquee">CÀ PHÊ VIỆT <span>✳</span> TRÀ TRÁI CÂY <span>✳</span> TRÀ SỮA <span>✳</span> SODA & NƯỚC ÉP <span>✳</span> CHILL YOUR WAY</div>
+<section class="ch-section" id="favorites"><div class="ch-section-head"><div><div class="ch-eyebrow">MỘT CHÚT GỢI Ý</div><h2>Chọn một vị, đổi tâm trạng.</h2></div><a class="ch-text-link" href="/Cafe/Menu">Xem toàn bộ menu ↗</a></div>
+<div class="ch-product-grid home-grid">
+@foreach(var product in Model.Where(p=>p.IsAvailable).Take(4)){<partial name="_ChillProduct" model="product"/>}
+</div></section><section class="ch-story"><div class="ch-eyebrow">THE CHILL WAY</div><h2>Không cần vội.<br>Cứ chọn món bạn yêu.</h2><p>Từ cà phê quen thuộc đến một ly trà trái cây mới mẻ. Tìm một hương vị cho riêng mình trong thực đơn Chill COFÉ.</p><a class="ch-button secondary" href="/Cafe/Menu">Tìm món của bạn ↗</a></section>

@@ -1,0 +1,4 @@
+@model IEnumerable<QuanLiQuanCaffee.Models.Table>
+@{ ViewData["Title"]="Chọn bàn"; }
+<section class="ch-section"><div class="ch-section-head"><div><div class="ch-eyebrow">CHILL COFÉ / BÁN HÀNG</div><h1>Một chỗ ngồi, một câu chuyện.</h1><p>Chọn bàn để tạo hoặc tiếp tục đơn hàng.</p></div><span class="ch-pill">@Model.Count(t=>t.Status=="Trống") bàn trống / @Model.Count() bàn</span></div>
+<div class="ch-tables">@foreach(var table in Model){<a class="ch-table @(table.Status=="Trống" ? "" : "occupied")" href="/Pos/Index?tableId=@table.TableID"><span class="ch-table-icon">☷</span><h2>Bàn @table.Name</h2><span class="ch-pill">@table.Status</span><p>@(table.Status=="Trống" ? "Bắt đầu đơn mới ↗" : "Xem đơn tại bàn ↗")</p></a>}</div></section>

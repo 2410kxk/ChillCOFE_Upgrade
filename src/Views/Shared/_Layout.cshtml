@@ -1,0 +1,24 @@
+@{ var staff = User.IsInRole("Admin") || User.IsInRole("Staff"); }
+<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>@ViewData["Title"] · Chill COFÉ</title>
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="~/css/chill.css" asp-append-version="true"/>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+</head><body>
+@Html.AntiForgeryToken()
+<header class="ch-header"><a class="ch-brand" href="/">chill<span>COFÉ / EST. 2026</span></a>
+<nav aria-label="Điều hướng chính"><a href="/">Trang chủ</a><a href="/Cafe/Menu">Thực đơn</a>
+@if(staff){<a href="/Pos/Tables">Bán hàng</a>}
+@if(User.IsInRole("Admin")){<a href="/CatalogAdmin">Quản lý món</a><a href="/Statistics/Revenue">Doanh thu</a><a href="/Order/Manage">Đơn hàng</a><a href="/Employee">Nhân viên</a><a href="/Shift">Ca làm</a>}
+</nav><div class="ch-account">
+@if(User.Identity?.IsAuthenticated == true){<span class="ch-user">@User.Identity.Name</span><form method="post" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/"><button class="ch-button small secondary">Đăng xuất</button></form>}
+else{<a class="ch-button small" href="/Identity/Account/Login">Đăng nhập ↗</a>}
+</div></header>
+<main id="main">@RenderBody()</main>
+<footer class="ch-footer"><a class="ch-brand" href="/">chill<span>COFÉ</span></a><p>Một chút cà phê. Một khoảng bình yên.</p><span>Chill COFÉ · Đồ án 2026</span></footer>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>$.ajaxSetup({beforeSend:function(xhr,settings){if(!settings.crossDomain&&!/^(GET|HEAD|OPTIONS)$/i.test(settings.type)){xhr.setRequestHeader('RequestVerificationToken',document.querySelector('input[name="__RequestVerificationToken"]').value);}}});</script>
+<script src="~/js/chill.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required:false)
+</body></html>

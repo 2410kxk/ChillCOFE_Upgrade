@@ -1,0 +1,5 @@
+@model QuanLiQuanCaffee.Models.Product
+@{ViewData["Title"]=Model.Name;}
+<section class="ch-section"><a class="ch-back" href="/Cafe/Menu">← Trở lại thực đơn</a><div class="ch-detail"><img src="@(Model.ImageUrl ?? "/images/ca-phe-kem-muoi.jpg")" alt="@Model.Name"/><div><div class="ch-eyebrow">@Model.Category?.Name</div><h1>@Model.Name</h1><p>@Model.Description</p><div class="ch-pay-total">@Model.Price.ToString("N0") đ</div><span class="ch-pill">@(Model.IsAvailable ? "Đang phục vụ" : "Tạm hết món")</span><p class="mt-4">@(Model.SupportsCustomization ? "Size M theo giá niêm yết. Size L thêm 7.000đ. Có thể chọn mức đường, đá và topping tại quầy." : "Món dùng theo khẩu phần tiêu chuẩn.")</p>
+@if(User.IsInRole("Admin") || User.IsInRole("Staff")){<a class="ch-button" href="/Pos/Tables">Chọn bàn để thêm món ↗</a>}else{<p>Gọi món tại quầy để chọn tùy chọn phù hợp.</p>}
+</div></div></section>

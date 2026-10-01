@@ -1,0 +1,21 @@
+@model QuanLiQuanCaffee.Models.Product
+
+<div class="container mt-5">
+    <h2 class="text-danger">Xác nhận xóa món ăn</h2>
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <img src="@Model.ImageUrl" class="img-fluid rounded shadow" />
+        </div>
+        <div class="col-md-8">
+            <h3>Bạn có chắc chắn muốn xóa món: <strong>@Model.Name</strong>?</h3>
+            <p>Giá: @Model.Price.ToString("N0") VNĐ</p>
+
+            <form asp-action="Delete" method="post">
+                <input type="hidden" asp-for="ProductID" />
+                <button type="submit" class="btn btn-danger px-4">Xác nhận xóa</button>
+                <a asp-action="Index" class="btn btn-secondary px-4">Hủy bỏ</a>
+            </form>
+        </div>
+    </div>
+</div>

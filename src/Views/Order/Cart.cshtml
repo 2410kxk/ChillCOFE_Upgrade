@@ -1,14 +1,12 @@
 @model List<QuanLiQuanCaffee.Models.OrderDetail>
-
-<h2 class="text-center mt-3">🛒 Giỏ hàng</h2>
-
-@if (Model == null || Model.Count == 0)
+@{ ViewData["Title"] = "Giỏ món tại quầy"; }
+<section class="ux-page"><header class="ux-page-head"><div><p class="lx-kicker">BÁN HÀNG / GIỎ MÓN</p><h1>Giỏ món tại quầy</h1><p class="ux-subtitle"></p></div><div class="ux-head-actions"></div></header><div class="ux-panel">@if (Model == null || Model.Count == 0)
 {
-    <p class="text-center text-danger">Giỏ hàng trống</p>
+    <div class="ux-empty"><h2>Chưa có món trong giỏ.</h2><a class="lx-button" href="/Product">Chọn món </a></div>
 }
 else
 {
-    <table class="table table-bordered text-center">
+    <div class="table-responsive"><table class="table table-bordered text-center">
         <thead class="table-dark">
             <tr>
                 <th>Tên món</th>
@@ -30,9 +28,9 @@ else
                 total += thanhTien;
 
                 <tr>
-                    <td>@item.Product.Name</td>
+                    <td>@item.Product?.Name</td>
 
-                    <td>@item.Price VNĐ</td>
+                    <td>@item.Price.ToString("N0") đ</td>
 
                     <!-- 🔥 TĂNG GIẢM -->
                     <td>
@@ -49,7 +47,7 @@ else
                         </button>
                     </td>
 
-                    <td>@thanhTien VNĐ</td>
+                    <td>@thanhTien.ToString("N0") đ</td>
 
                     <!-- ❌ XÓA -->
                     <td>
@@ -65,17 +63,18 @@ else
             <tr>
                 <td colspan="3"><b>Tổng tiền</b></td>
                 <td colspan="2" class="text-danger">
-                    <b>@total VNĐ</b>
+                    <b>@total.ToString("N0") đ</b>
                 </td>
             </tr>
         </tbody>
-    </table>
+    </table></div>
 
     <div class="text-end">
-        <button class="btn btn-primary">Thanh toán</button>
+        <a href="/Order/Tables" class="lx-button">Chọn bàn để tiếp tục thanh toán </a>
     </div>
 }
 
+</div></section>
 @section Scripts {
     <script>
          $(".btn-add").click(function () {

@@ -1,0 +1,187 @@
+{
+  "environment": "Isolated SQLite test database; not SQL Server",
+  "results": [
+    {
+      "name": "login alice",
+      "passed": true
+    },
+    {
+      "name": "login bob",
+      "passed": true
+    },
+    {
+      "name": "login staff",
+      "passed": true
+    },
+    {
+      "name": "login admin",
+      "passed": true
+    },
+    {
+      "name": "render /",
+      "passed": true
+    },
+    {
+      "name": "render /Cafe/Menu",
+      "passed": true
+    },
+    {
+      "name": "render /Online",
+      "passed": true
+    },
+    {
+      "name": "render /Online/History",
+      "passed": true
+    },
+    {
+      "name": "render delivery staff",
+      "passed": true
+    },
+    {
+      "name": "render floor",
+      "passed": true
+    },
+    {
+      "name": "user blocked deliveries",
+      "passed": true
+    },
+    {
+      "name": "CSRF blocked",
+      "passed": true
+    },
+    {
+      "name": "add product",
+      "passed": true
+    },
+    {
+      "name": "cart isolated",
+      "passed": true
+    },
+    {
+      "name": "invalid options blocked",
+      "passed": true
+    },
+    {
+      "name": "update options",
+      "passed": true
+    },
+    {
+      "name": "server prices 2 x (35000+7000+10000)",
+      "passed": true
+    },
+    {
+      "name": "invalid phone blocked",
+      "passed": true
+    },
+    {
+      "name": "price tamper blocked",
+      "passed": true
+    },
+    {
+      "name": "mark unavailable",
+      "passed": true
+    },
+    {
+      "name": "unavailable add blocked",
+      "passed": true
+    },
+    {
+      "name": "unavailable checkout blocked",
+      "passed": true
+    },
+    {
+      "name": "reopen product",
+      "passed": true
+    },
+    {
+      "name": "reopened add works",
+      "passed": true
+    },
+    {
+      "name": "checkout accepted",
+      "passed": true
+    },
+    {
+      "name": "retry same order",
+      "passed": true
+    },
+    {
+      "name": "cart cleared",
+      "passed": true
+    },
+    {
+      "name": "history ownership",
+      "passed": true
+    },
+    {
+      "name": "history options saved",
+      "passed": true
+    },
+    {
+      "name": "user cannot complete",
+      "passed": true
+    },
+    {
+      "name": "cannot complete before shipping",
+      "passed": true
+    },
+    {
+      "name": "shipping transition",
+      "passed": true
+    },
+    {
+      "name": "payment confirmation required",
+      "passed": true
+    },
+    {
+      "name": "delivery paid",
+      "passed": true
+    },
+    {
+      "name": "closed order cannot cancel",
+      "passed": true
+    },
+    {
+      "name": "staff table note",
+      "passed": true
+    },
+    {
+      "name": "note persisted",
+      "passed": true
+    },
+    {
+      "name": "user blocked note",
+      "passed": true
+    },
+    {
+      "name": "remove line",
+      "passed": true
+    },
+    {
+      "name": "order management render",
+      "passed": true
+    },
+    {
+      "name": "new account registration",
+      "passed": true
+    },
+    {
+      "name": "Browser visual/UI verification",
+      "passed": null,
+      "status": "blocked",
+      "detail": "Chromium unavailable; download endpoint returned Site Unavailable. HTML routes render and JS syntax checked separately."
+    },
+    {
+      "name": "One order after checkout retry",
+      "passed": true
+    },
+    {
+      "name": "Revenue stored exactly once: 104000 VND",
+      "passed": true
+    },
+    {
+      "name": "New registration assigned User only, ignores injected Admin role",
+      "passed": true
+    }
+  ]
+}

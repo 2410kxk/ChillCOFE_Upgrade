@@ -7,7 +7,7 @@ using QuanLiQuanCaffee.Models;
 
 namespace QuanLiQuanCaffee.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin"), AutoValidateAntiforgeryToken]
     public class AdminController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
@@ -19,6 +19,8 @@ namespace QuanLiQuanCaffee.Controllers
             _context = context;
         }
 
+        public IActionResult Index() => View();
+
         // Trang hiển thị thống kê chính
         public async Task<IActionResult> Revenue()
         {
@@ -29,14 +31,14 @@ namespace QuanLiQuanCaffee.Controllers
                 .Where(o => o.Status == "Đã thanh toán");
 
             // Thống kê card
-            ViewBag.TotalOrders = await validOrders.CountAsync(o => o.OrderTime.Date == today);
+            ViewBag.TotalOrders = await validOrders.CountAsync(o => (o.PaidAt ?? o.OrderTime).Date == today);
 
             ViewBag.TodayRevenue = await validOrders
-                .Where(o => o.OrderTime.Date == today)
+                .Where(o => (o.PaidAt ?? o.OrderTime).Date == today)
                 .SumAsync(o => o.TotalAmount);
 
             ViewBag.MonthRevenue = await validOrders
-                .Where(o => o.OrderTime.Month == DateTime.Now.Month && o.OrderTime.Year == DateTime.Now.Year)
+                .Where(o => (o.PaidAt ?? o.OrderTime).Month == DateTime.Now.Month && (o.PaidAt ?? o.OrderTime).Year == DateTime.Now.Year)
                 .SumAsync(o => o.TotalAmount);
 
             // Dữ liệu biểu đồ 7 ngày
@@ -47,7 +49,7 @@ namespace QuanLiQuanCaffee.Controllers
             foreach (var day in last7Days)
             {
                 var dailyTotal = await validOrders
-                    .Where(o => o.OrderTime.Date == day.Date)
+                    .Where(o => (o.PaidAt ?? o.OrderTime).Date == day.Date)
                     .SumAsync(o => o.TotalAmount);
                 chartValues.Add(dailyTotal);
             }
@@ -71,7 +73,7 @@ namespace QuanLiQuanCaffee.Controllers
             var orders = await _context.Orders
                 .Include(o => o.Details)
                     .ThenInclude(d => d.Product)
-                .Where(o => o.OrderTime.Date == targetDate.Date &&
+                .Where(o => (o.PaidAt ?? o.OrderTime).Date == targetDate.Date &&
                            (o.Status == "Đã thanh toán"))
                 .ToListAsync();
 
@@ -81,7 +83,7 @@ namespace QuanLiQuanCaffee.Controllers
 
             var productStats = orders
                 .SelectMany(o => o.Details)
-                .GroupBy(d => d.Product.Name)
+                .GroupBy(d => d.Product?.Name ?? "Món đã lưu")
                 .Select(group => new
                 {
                     name = group.Key,

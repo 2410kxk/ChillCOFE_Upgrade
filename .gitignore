@@ -1,0 +1,10 @@
+bin/
+obj/
+.vs/
+*.user
+*.local.http
+*.bak
+*.db
+*.db-shm
+*.db-wal
+**/secrets.json

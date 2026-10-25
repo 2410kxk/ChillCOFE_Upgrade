@@ -10,6 +10,7 @@ namespace QuanLiQuanCaffee.Models
         public string Name { get; set; } = "";   // Bàn 1, Bàn 2
 
         public string Status { get; set; } = "Trống"; // Trống / Đang dùng
+        [StringLength(300)] public string? Note { get; set; }
        
     }
 }

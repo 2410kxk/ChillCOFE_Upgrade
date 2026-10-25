@@ -1,21 +1,3 @@
 @model QuanLiQuanCaffee.Models.Product
-
-<div class="container mt-5">
-    <h2 class="text-danger">Xác nhận xóa món ăn</h2>
-    <hr />
-    <div class="row">
-        <div class="col-md-4">
-            <img src="@Model.ImageUrl" class="img-fluid rounded shadow" />
-        </div>
-        <div class="col-md-8">
-            <h3>Bạn có chắc chắn muốn xóa món: <strong>@Model.Name</strong>?</h3>
-            <p>Giá: @Model.Price.ToString("N0") VNĐ</p>
-
-            <form asp-action="Delete" method="post">
-                <input type="hidden" asp-for="ProductID" />
-                <button type="submit" class="btn btn-danger px-4">Xác nhận xóa</button>
-                <a asp-action="Index" class="btn btn-secondary px-4">Hủy bỏ</a>
-            </form>
-        </div>
-    </div>
-</div>
+@{ ViewData["Title"] = "Xác nhận xóa món"; }
+<section class="ux-page"><header class="ux-page-head"><div><p class="lx-kicker">QUẢN TRỊ / THỰC ĐƠN</p><h1>Xác nhận xóa món</h1><p class="ux-subtitle"></p></div><div class="ux-head-actions"></div></header><div class="ux-confirm"><div class="ux-confirm-icon">!</div><h2>Xóa “@Model.Name”?</h2><p>Kiểm tra đúng món trước khi xác nhận thao tác.</p><div class="ux-confirm-product"><img src="@Model.ImageUrl" alt="@Model.Name"/><div><strong>@Model.Name</strong><p>@Model.Price.ToString("N0") đ</p></div></div><form asp-action="Delete" method="post"><input type="hidden" asp-for="ProductID"/><div class="ux-form-actions"><button type="submit" class="btn btn-danger">Xác nhận xóa</button><a asp-action="Index" class="btn btn-outline-secondary">Giữ lại món</a></div></form></div></section>

@@ -4,12 +4,12 @@
     ViewData["Title"] = "Quản lý đơn hàng";
 }
 
-<div class="card shadow border-0">
+<section class="ux-page ux-orders"><header class="ux-page-head"><div><p class="lx-kicker">VẬN HÀNH / ĐƠN HÀNG</p><h1>Mỗi đơn hàng, một trải nghiệm.</h1><p class="ux-subtitle">Theo dõi trạng thái và xem chi tiết các đơn trong danh sách.</p></div><div class="ux-head-actions"><a href="/Online/Deliveries" class="lx-button">Theo dõi giao hàng</a></div></header><div class="ux-toolbar"><label class="ux-search"><span aria-hidden="true">⌕</span><input type="search" data-row-search="orders-table" placeholder="Tìm mã đơn, khách hoặc trạng thái…" aria-label="Tìm mã đơn, khách hoặc trạng thái…"/></label><span class="ux-help" data-search-count="orders-table" aria-live="polite"></span></div><p class="ux-filter-empty" data-search-empty="orders-table" hidden>Không tìm thấy kết quả phù hợp.</p><div class="card shadow border-0">
     <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">DANH SÁCH ĐƠN HÀNG</h5>
+        <h5 class="mb-0">Đơn hàng trong danh sách</h5>
     </div>
     <div class="card-body">
-        <table class="table table-hover">
+        <div class="table-responsive"><table class="table table-hover" id="orders-table">
             <thead class="table-light">
                 <tr>
                     <th>Mã ĐH</th>
@@ -22,11 +22,11 @@
             <tbody>
                 @foreach (var item in Model)
                 {
-                    <tr>
+                    <tr data-search-row>
                         <td>#@item.OrderID</td>
                         <td>@item.OrderTime.ToString("dd/MM HH:mm")</td>
                         <td>
-                            @if (item.Status == "Online")
+                            @if (item.IsOnline || item.Status == "Online")
                             {
                                 <span>👤 @item.CustomerName (@item.Phone)</span>
                             }
@@ -36,8 +36,8 @@
                             }
                         </td>
                         <td>
-                            <span class="badge @(item.Status == "Đã thanh toán" ? "bg-success" : (item.Status == "Online" ? "bg-info" : "bg-warning text-dark"))">
-                                @item.Status
+                            <span class="badge @(item.Status == "Đã thanh toán" ? "bg-success" : (item.IsOnline || item.Status == "Online" ? "bg-info" : "bg-warning text-dark"))">
+                                @(item.DeliveredAt!=null?"Giao thành công / Đã thanh toán":item.Status)
                             </span>
                         </td>
                         <td class="text-center">
@@ -45,17 +45,15 @@
                                 <i class="bi bi-eye"></i> Chi tiết
                             </button>
 
-                            @if (item.Status == "Online")
+                            @if (item.IsOnline || item.Status == "Online")
                             {
-                                <button onclick="confirmPayment(@item.OrderID)" class="btn btn-sm btn-success ms-1">
-                                    <i class="bi bi-check-circle"></i> Thanh toán
-                                </button>
+                                <a href="/Online/Deliveries" class="btn btn-sm btn-outline-secondary">Theo dõi giao hàng</a>
                             }
                         </td>
                     </tr>
                 }
             </tbody>
-        </table>
+        </table></div>
     </div>
 </div>
 
@@ -77,7 +75,7 @@
                         <p class="mb-1"><strong>Trạng thái:</strong> <span id="md-status" class="badge bg-secondary"></span></p>
                     </div>
                 </div>
-                <table class="table table-bordered">
+                <div class="table-responsive"><table class="table table-bordered">
                     <thead class="table-light">
                         <tr>
                             <th>Tên món</th>
@@ -94,7 +92,7 @@
                             <th class="text-end text-danger fs-5" id="md-total"></th>
                         </tr>
                     </tfoot>
-                </table>
+                </table></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -106,8 +104,11 @@
     </div>
 </div>
 
+</section>
 @section Scripts {
     <script>
+function uiEscape(value){const span=document.createElement('span');span.textContent=String(value ?? '');return span.innerHTML.replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+
         /**
          * Lấy dữ liệu chi tiết đơn hàng qua AJAX
          */
@@ -136,7 +137,7 @@
                     data.details.forEach(item => {
                         html += `
                             <tr>
-                                <td>${item.productName}</td>
+                                <td>${uiEscape(item.productName)}</td>
                                 <td class="text-center">${item.quantity}</td>
                                 <td class="text-end">${item.price.toLocaleString('vi-VN')}đ</td>
                                 <td class="text-end fw-bold">${item.total.toLocaleString('vi-VN')}đ</td>

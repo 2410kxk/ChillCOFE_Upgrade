@@ -1,0 +1,9 @@
+<aside class="ux-worknav" aria-label="Điều hướng vận hành"><a href="/" class="ux-worknav-home">Về cửa hàng</a><p class="lx-kicker">KHÔNG GIAN LÀM VIỆC</p><nav>
+@if(User.IsInRole("Admin")){
+<a href="/Admin"><span>01</span> Tổng quan quản lý</a><a href="/ApiDashboard"><span>02</span> Dashboard</a>
+}
+<a href="/Online/Deliveries"><span>↗</span> Đơn giao hàng</a><a href="/Pos/Tables"><span>03</span> Bán hàng tại quầy</a>
+@if(User.IsInRole("Admin")){
+<a href="/CatalogAdmin"><span>04</span> Thực đơn</a><a href="/Order/Manage"><span>05</span> Đơn hàng</a><a href="/Table"><span>06</span> Quản lý bàn</a><a href="/Reviews/Manage"><span>07</span> Quản lý đánh giá</a><a href="/Notifications/Manage"><span>08</span> Quản lý thông báo</a><a href="/Employee"><span>09</span> Nhân viên</a><a href="/Shift"><span>10</span> Lịch làm việc</a><a href="/Statistics/Revenue"><span>11</span> Báo cáo doanh thu</a><a href="/StoreSettings"><span>12</span> Thông tin quán</a>
+}
+</nav><div class="ux-worknav-note"><span class="ux-status-dot"></span> Chill COFÉ<p>Chăm chút từng đơn hàng.<br>Trọn vẹn mỗi trải nghiệm.</p></div></aside>

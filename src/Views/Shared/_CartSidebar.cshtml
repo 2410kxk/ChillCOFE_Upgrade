@@ -3,13 +3,13 @@
 @if (Model == null || !Model.Any())
 {
     <div class="text-center mt-5">
-        <span class="fs-1 text-muted">🛒</span>
+        <span class="fs-1 text-muted">＋</span>
         <p class="text-muted">Chưa có món nào được chọn</p>
     </div>
 }
 else
 {
-    <div class="table-responsive" style="max-height: 450px; overflow-y: auto;">
+    <div class="table-responsive ux-cart-partial" style="max-height: 450px; overflow-y: auto;">
         <table class="table table-borderless align-middle">
             <tbody>
                 @foreach (var item in Model)
@@ -21,9 +21,9 @@ else
                         </td>
                         <td style="width: 30%">
                             <div class="d-flex align-items-center justify-content-center border rounded-pill p-1 bg-light">
-                                <button class="btn btn-sm p-0 border-0" style="width:25px;" onclick="updateQty(@item.ProductID, -1)">➖</button>
+                                <button class="btn btn-sm p-0 border-0" style="width:25px;" onclick="updateQty(@item.ProductID, -1)">−</button>
                                 <span class="mx-2 fw-bold" style="min-width: 20px; text-align: center">@item.Quantity</span>
-                                <button class="btn btn-sm p-0 border-0" style="width:25px;" onclick="updateQty(@item.ProductID, 1)">➕</button>
+                                <button class="btn btn-sm p-0 border-0" style="width:25px;" onclick="updateQty(@item.ProductID, 1)">+</button>
                             </div>
                         </td>
                         <td class="text-end fw-bold" style="width: 20%">

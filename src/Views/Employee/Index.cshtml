@@ -1,16 +1,6 @@
 @model IEnumerable<QuanLiQuanCaffee.Models.Employee>
-
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="fw-bold text-danger">DANH SÁCH NHÂN VIÊN</h2>
-        <a asp-action="Create" class="btn btn-primary shadow-sm">
-            <i class="bi bi-person-plus-fill"></i> Thêm mới
-        </a>
-    </div>
-
-    <div class="card shadow">
-        <div class="card-body p-0">
-            <table class="table table-hover mb-0">
+@{ ViewData["Title"] = "Những người làm nên Chill."; }
+<section class="ux-page"><header class="ux-page-head"><div><p class="lx-kicker">ĐỘI NGŨ / NHÂN VIÊN</p><h1>Những người làm nên Chill.</h1><p class="ux-subtitle">Quản lý hồ sơ và thông tin liên hệ của đội ngũ.</p></div><div class="ux-head-actions"><a href="/Employee/Create" class="lx-button">+ Thêm nhân viên</a></div></header><div class="ux-toolbar"><label class="ux-search"><span aria-hidden="true">⌕</span><input type="search" data-row-search="employees-table" placeholder="Tìm họ tên, vị trí hoặc số điện thoại…" aria-label="Tìm họ tên, vị trí hoặc số điện thoại…"/></label><span class="ux-help" data-search-count="employees-table" aria-live="polite"></span></div><p class="ux-filter-empty" data-search-empty="employees-table" hidden>Không tìm thấy kết quả phù hợp.</p><div class="ux-panel ux-table-panel"><div class="table-responsive"><table class="table" id="employees-table">
                 <thead class="table-dark">
                     <tr>
                         <th class="ps-3">Họ và Tên</th>
@@ -25,7 +15,7 @@
                     {
                         foreach (var item in Model)
                         {
-                            <tr>
+                            <tr data-search-row>
                                 <td class="fw-bold ps-3">@item.FullName</td>
                                 <td>@item.Phone</td>
                                 <td>
@@ -46,13 +36,13 @@
                                 <td class="text-center">
                                     <div class="btn-group" role="group">
                                         <a asp-action="Edit" asp-route-id="@item.EmployeeID" class="btn btn-sm btn-outline-warning" title="Sửa">
-                                            <i class="bi bi-pencil-square"></i>
+                                            Sửa
                                         </a>
                                         <a asp-action="Details" asp-route-id="@item.EmployeeID" class="btn btn-sm btn-outline-info" title="Chi tiết">
-                                            <i class="bi bi-info-circle"></i>
+                                            Hồ sơ
                                         </a>
                                         <a asp-action="Delete" asp-route-id="@item.EmployeeID" class="btn btn-sm btn-outline-danger" title="Xóa">
-                                            <i class="bi bi-trash"></i>
+                                            Xóa
                                         </a>
                                     </div>
                                 </td>
@@ -68,26 +58,4 @@
                         </tr>
                     }
                 </tbody>
-            </table>
-        </div>
-    </div>
-</div>
-
-@* Thay vì dùng @section Styles, hãy viết trực tiếp *@
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-<style>
-    .table thead th {
-        border: none;
-    }
-
-    .card {
-        border: none;
-        border-radius: 10px;
-        overflow: hidden;
-    }
-
-    .badge {
-        font-size: 0.85rem;
-        padding: 0.5em 0.8em;
-    }
-</style>
+            </table></div></div></section>

@@ -1,0 +1,7 @@
+CHILL COFÉ — BẢN NÂNG CẤP ONLINE 20/10/2026
+
+Đọc README_ONLINE_20261020.md trước.
+Sao lưu database, chạy Upgrade_20261014.sql rồi Upgrade_20261020_Online.sql.
+Không xóa database, không chạy lại script tạo dữ liệu gốc.
+Giải nén vào thư mục mới. Có đầy đủ ảnh trong gói.
+Kết quả kiểm tra và giới hạn: docs/KIEM_THU_ONLINE.md.

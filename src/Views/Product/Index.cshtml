@@ -1,67 +1,6 @@
 @model IEnumerable<Product>
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>MENU QUÁN</h2>
-
-    @if (User.IsInRole("Admin"))
-    {
-        <a href="/Product/Create" class="btn btn-success">
-            + Thêm món
-        </a>
-    }
-</div>
-@if (ViewBag.Search != null)
-{
-    <h4 class="text-center text-danger mt-3">
-        Kết quả tìm: "@ViewBag.Search"
-    </h4>
-}
-@if (ViewBag.CategoryName != null)
-{
-    <h2 class="text-center mt-4 fw-bold" style="color:#8B0000;">
-    🍹 @ViewBag.CategoryName
-</h2>
-}
-<div id="msg-area"></div>
-
-<div class="row">
-    @foreach (var item in Model)
-    {
-        <div class="col-md-3">
-            <div class="card mb-4 shadow-sm">
-                <img src="@item.ImageUrl" class="card-img-top" style="height:200px; object-fit:cover;">
-
-                <div class="card-body text-center">
-                    <h5 class="card-title">@item.Name</h5>
-
-                    <p class="text-danger fw-bold">
-                        @item.Price VNĐ
-                    </p>
-
-                    <p class="text-muted">
-                        @item.Category?.Name
-                    </p>
-
-                    <!-- ✅ NÚT THÊM ĐÚNG -->
-                    <button class="btn btn-success btn-add"
-                            data-id="@item.ProductID">
-                        Thêm
-                    </button>
-
-                    <br /><br />
-
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <hr />
-                        <div class="d-flex justify-content-around">
-                            <a asp-action="Edit" asp-route-id="@item.ProductID" class="btn btn-sm btn-outline-primary">Sửa</a>
-                            <a asp-action="Delete" asp-route-id="@item.ProductID" class="btn btn-sm btn-outline-danger">Xóa</a>
-                        </div>
-                    }
-                </div>
-            </div>
-        </div>
-    }
-</div>
+@{ ViewData["Title"] = "Thực đơn trong ngày"; }
+<section class="ux-page"><header class="ux-page-head"><div><p class="lx-kicker">CHILL COFÉ / MENU</p><h1>Thực đơn trong ngày</h1><p class="ux-subtitle">Những hương vị dành cho khoảng nghỉ của bạn.</p></div><div class="ux-head-actions">@if(User.IsInRole("Admin")){<a href="/Product/Create" class="lx-button">+ Thêm món</a>}</div></header><div id="msg-area" role="status" aria-live="polite"></div>@if(ViewBag.Search != null){<p class="ux-help">Kết quả tìm: @ViewBag.Search</p>}@if(ViewBag.CategoryName != null){<p class="lx-kicker">@ViewBag.CategoryName</p>}<div class="ux-shop-grid">@foreach(var item in Model){<article class="ux-shop-card"><a href="/Product/Details/@item.ProductID"><img src="@item.ImageUrl" alt="@item.Name" loading="lazy"/></a><div><p class="lx-kicker">@item.Category?.Name</p><h2>@item.Name</h2><div class="ux-shop-bottom"><strong>@item.Price.ToString("N0") đ</strong><button class="btn btn-success btn-add" data-id="@item.ProductID">+ Thêm món</button></div>@if(User.IsInRole("Admin")){<div class="ux-form-actions"><a asp-action="Edit" asp-route-id="@item.ProductID">Sửa món</a><a asp-action="Delete" asp-route-id="@item.ProductID">Xóa món</a></div>}</div></article>}</div></section>
 @section Scripts {
     <script>
         $(document).ready(function () {
@@ -82,7 +21,7 @@
                         $("#msg-area").html("");
 
                         // ✅ Hiện thông báo mới
-                        $("#msg-area").html(
+                        $("#msg-area").show().html(
                             "<div class='alert alert-success text-center'>Đã thêm món!</div>"
                         );
 

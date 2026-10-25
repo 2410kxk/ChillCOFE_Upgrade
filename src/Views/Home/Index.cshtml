@@ -1,12 +1,59 @@
 @model IEnumerable<QuanLiQuanCaffee.Models.Product>
-@{ ViewData["Title"] = "Một khoảng bình yên"; }
-<section class="ch-hero"><div class="ch-hero-copy"><div class="ch-eyebrow"><span class="ch-dot"></span> CHẬM MỘT NHỊP, CHILL MỘT CHÚT</div>
-<h1>Ngày đẹp hơn,<br>từ một ly <em>chill.</em></h1><p>Cà phê đậm vị, trà thơm mát và những món uống dành cho khoảng nghỉ nhỏ của bạn.</p>
-<div class="ch-actions"><a class="ch-button" href="/Cafe/Menu">Khám phá thực đơn <span>↗</span></a><a class="ch-text-link" href="#favorites">Hôm nay uống gì? ↓</a></div>
-<div class="ch-hero-note"><span>01 /</span> CHỌN MÓN BẠN THÍCH. TẬN HƯỞNG THEO CÁCH CỦA BẠN.</div></div>
-<div class="ch-hero-photo"><img src="/images/ca-phe-kem-muoi.jpg" alt="Cà phê kem muối với lớp kem mềm"/><div class="ch-photo-tag">Cà phê kem muối <span>Đậm vị cà phê, mềm vị kem.</span></div><div class="ch-stamp">SIP SLOW<br>FEEL GOOD</div></div></section>
-<div class="ch-marquee">CÀ PHÊ VIỆT <span>✳</span> TRÀ TRÁI CÂY <span>✳</span> TRÀ SỮA <span>✳</span> SODA & NƯỚC ÉP <span>✳</span> CHILL YOUR WAY</div>
-<section class="ch-section" id="favorites"><div class="ch-section-head"><div><div class="ch-eyebrow">MỘT CHÚT GỢI Ý</div><h2>Chọn một vị, đổi tâm trạng.</h2></div><a class="ch-text-link" href="/Cafe/Menu">Xem toàn bộ menu ↗</a></div>
-<div class="ch-product-grid home-grid">
-@foreach(var product in Model.Where(p=>p.IsAvailable).Take(4)){<partial name="_ChillProduct" model="product"/>}
-</div></section><section class="ch-story"><div class="ch-eyebrow">THE CHILL WAY</div><h2>Không cần vội.<br>Cứ chọn món bạn yêu.</h2><p>Từ cà phê quen thuộc đến một ly trà trái cây mới mẻ. Tìm một hương vị cho riêng mình trong thực đơn Chill COFÉ.</p><a class="ch-button secondary" href="/Cafe/Menu">Tìm món của bạn ↗</a></section>
+@{
+    ViewData["Title"] = "Chậm một nhịp. Đậm một chút chill.";
+    var favorites = (Model ?? Enumerable.Empty<QuanLiQuanCaffee.Models.Product>()).Where(p => p.IsAvailable).Take(8).ToList();
+    var canShop = User.Identity?.IsAuthenticated == true && !User.IsInRole("Admin") && !User.IsInRole("Staff");
+}
+<link rel="stylesheet" href="~/css/chill-home-immersive.css" asp-append-version="true" />
+<div class="chill-immersive" id="chill-home">
+    <div class="hi-background" aria-hidden="true"></div>
+    <div class="hi-progress" aria-hidden="true"><span></span></div>
+    <section class="hi-hero hi-wrap" aria-labelledby="hi-title">
+        <div class="hi-hero-copy">
+            <p class="hi-eyebrow">CHILL COFÉ · MỘT KHOẢNG THẢNH THƠI</p>
+            <h1 id="hi-title">Chậm một nhịp.<br /><em>Đậm một<br class="hi-desktop-break" /> chút chill.</em></h1>
+            <p class="hi-lead">Ngoài kia có thể vội.<br />Ở đây, cứ để cà phê thơm và câu chuyện dài thêm một chút.</p>
+            <div class="hi-actions"><a class="hi-button hi-button-primary" href="/Cafe/Menu">Tìm hương vị của bạn <span aria-hidden="true">↗</span></a><a class="hi-text-link" href="#hi-story">Chuyện của Chill <span aria-hidden="true">↓</span></a></div>
+        </div>
+        <a class="hi-hero-note hi-glass" href="#hi-menu"><span class="hi-note-icon" aria-hidden="true">☕</span><span><small>MỘT LỜI HẸN NHỎ</small>Hôm nay, chill cùng vị nào?</span><span aria-hidden="true">↗</span></a>
+        <a class="hi-scroll" href="#hi-story"><span aria-hidden="true">↓</span> Cuộn chậm thôi. Còn nhiều điều dễ thương ở phía dưới.</a>
+    </section>
+    <section class="hi-wrap hi-section" id="hi-story" aria-labelledby="hi-story-title">
+        <div class="hi-story hi-glass" data-home-reveal>
+            <div><p class="hi-eyebrow">01 / CÂU CHUYỆN CỦA CHILL</p><h2 id="hi-story-title">Có những cuộc hẹn<br />không cần lý do.<br /><em>Chỉ cần một ly cà phê.</em></h2></div>
+            <div class="hi-story-copy"><p>Chill COFÉ dành một khoảng nhỏ cho những điều dễ bị bỏ quên: trang sách còn gấp, câu chuyện chưa kể hết, hay vài phút ngồi yên cùng chính mình.</p><p>Không cần một ngày thật đặc biệt để tự thưởng một hương vị mình thích. Đôi khi, một chút đắng, một chút ngọt và một người ngồi cạnh đã là đủ.</p><p class="hi-signature">Một ly thơm. Một câu chuyện. Một khoảng chill.</p></div>
+        </div>
+    </section>
+    <section class="hi-wrap hi-section" aria-labelledby="hi-mood-title">
+        <header class="hi-section-head" data-home-reveal><div><p class="hi-eyebrow">02 / CHỌN THEO TÂM TRẠNG</p><h2 id="hi-mood-title">Hôm nay, bạn cần<br /><em>một chút gì?</em></h2></div><p>Một gợi ý nhỏ để bắt đầu.<br />Hương vị còn lại, bạn quyết định.</p></header>
+        <div class="hi-moods">
+            <a class="hi-glass hi-mood" href="/Cafe/Menu?search=c%C3%A0%20ph%C3%AA" data-home-reveal><span class="hi-card-number">01 — TỈNH TÁO</span><h3>Một chút đậm đà.</h3><p>Cho buổi sáng cần tập trung, hay một ý tưởng đang chờ được viết xuống.</p><span class="hi-card-link">Khám phá cà phê ↗</span></a>
+            <a class="hi-glass hi-mood" href="/Cafe/Menu?search=tr%C3%A0" data-home-reveal><span class="hi-card-number">02 — NHẸ NHÀNG</span><h3>Một chút thanh mát.</h3><p>Để ngày dài dịu lại, và cuộc trò chuyện có thêm một khoảng dễ chịu.</p><span class="hi-card-link">Khám phá các món trà ↗</span></a>
+            <a class="hi-glass hi-mood" href="/Cafe/Menu" data-home-reveal><span class="hi-card-number">03 — TÒ MÒ</span><h3>Một chút mới mẻ.</h3><p>Tạm rời món quen. Biết đâu hương vị yêu thích tiếp theo đang đợi bạn.</p><span class="hi-card-link">Dạo một vòng thực đơn ↗</span></a>
+        </div>
+    </section>
+    <section class="hi-wrap hi-section" id="hi-menu" aria-labelledby="hi-menu-title">
+        <header class="hi-section-head" data-home-reveal><div><p class="hi-eyebrow">03 / TỪ THỰC ĐƠN CHILL COFÉ</p><h2 id="hi-menu-title">Một hương vị quen.<br /><em>Một niềm vui mới.</em></h2></div><a href="/Cafe/Menu" class="hi-button">Xem toàn bộ thực đơn ↗</a></header>
+        <div class="hi-products">
+            @foreach (var product in favorites)
+            {
+                <article class="hi-product hi-glass" data-home-reveal>
+                    <a class="hi-product-image" href="/Product/Details/@product.ProductID" aria-label="Xem @product.Name"><img src="@(string.IsNullOrWhiteSpace(product.ImageUrl) ? "/images/ca-phe-kem-muoi.jpg" : product.ImageUrl)" alt="@product.Name" loading="lazy" decoding="async" /></a>
+                    <div class="hi-product-copy"><p class="hi-product-category">@(product.Category?.Name ?? "CHILL SELECTION")</p><h3><a href="/Product/Details/@product.ProductID">@product.Name</a></h3><div class="hi-product-bottom"><strong>@product.Price.ToString("N0") <small>đ</small></strong>
+                    @if (canShop) {<button class="hi-add" type="button" data-online-add="@product.ProductID" aria-label="Thêm @product.Name vào giỏ hàng"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 4h2l2 12h12l2-9H6M9 20h.01M18 20h.01M12 3v7M8.5 6.5h7" /></svg></button>}
+                    else {<a class="hi-add" href="/Product/Details/@product.ProductID" aria-label="Xem @product.Name">↗</a>}
+                    </div></div>
+                </article>
+            }
+        </div>
+        @if (!favorites.Any()) {<p class="hi-glass hi-empty">Thực đơn đang được cập nhật. Hẹn bạn quay lại chọn một hương vị mới.</p>}
+        <p class="hi-menu-footnote" data-home-reveal>Món hợp gu nhất là món được chọn theo cách của bạn. Tùy chọn size, đường, đá và topping với các món có hỗ trợ.</p>
+    </section>
+    <section class="hi-wrap hi-section" aria-labelledby="hi-ritual-title">
+        <div class="hi-ritual hi-glass" data-home-reveal><div><p class="hi-eyebrow">04 / MỘT NGHI THỨC NHỎ</p><h2 id="hi-ritual-title">Dành lại cho mình<br /><em>một khoảng bình yên.</em></h2><p>Không phải lúc nào cũng cần làm thêm điều gì.<br />Đôi khi, chỉ cần thưởng thức điều đang có.</p></div><ol><li><span>01</span><div><h3>Đặt những vội vàng xuống.</h3><p>Cho màn hình nghỉ một lát. Để mắt nhìn vào một điều thật gần.</p></div></li><li><span>02</span><div><h3>Nhấp một ngụm thật chậm.</h3><p>Cảm nhận hương thơm, vị đắng nhẹ và dư vị còn ở lại.</p></div></li><li><span>03</span><div><h3>Giữ lại một điều dễ thương.</h3><p>Một ý tưởng, một câu chuyện, hay đơn giản là tâm trạng tốt hơn.</p></div></li></ol></div>
+    </section>
+    <section class="hi-wrap hi-section hi-finale" aria-labelledby="hi-finale-title"><div class="hi-glass hi-finale-card" data-home-reveal><p class="hi-eyebrow">05 / CHUYỆN CHƯA KỂ HẾT</p><h2 id="hi-finale-title">Ly cà phê rồi sẽ vơi.<br /><em>Câu chuyện thì còn mãi.</em></h2><p>Mỗi lần ghé là một trải nghiệm riêng.<br />Kể Chill nghe về hương vị, khoảnh khắc và điều bạn muốn chúng mình làm tốt hơn.</p><div class="hi-actions"><a class="hi-button hi-button-primary" href="/Reviews">Ghé góc đánh giá ↗</a><a class="hi-button" href="/Cafe/Menu">Chọn món cho lần hẹn tới</a></div></div><a class="hi-back-top" href="#chill-home">Về đầu trang ↑</a></section>
+</div>
+@section Scripts {
+    <script src="~/js/chill-home-immersive.js" asp-append-version="true"></script>
+}

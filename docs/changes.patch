@@ -1,0 +1,519 @@
+--- a/src/Controllers/ApiDashboardController.cs
++++ b/src/Controllers/ApiDashboardController.cs
+@@ -0,0 +1,10 @@
++using Microsoft.AspNetCore.Authorization;
++using Microsoft.AspNetCore.Mvc;
++namespace QuanLiQuanCaffee.Controllers;
++[Authorize(Roles="Admin")]
++[ApiExplorerSettings(IgnoreApi=true)]
++public class ApiDashboardController : Controller
++{
++    [HttpGet("/ApiDashboard")]
++    public IActionResult Index() => View();
++}
+--- a/src/Controllers/CategoriesApiController.cs
++++ b/src/Controllers/CategoriesApiController.cs
+@@ -0,0 +1,47 @@
++using System.ComponentModel.DataAnnotations;
++using System.Data;
++using Microsoft.AspNetCore.Authorization;
++using Microsoft.AspNetCore.Mvc;
++using Microsoft.EntityFrameworkCore;
++using QuanLiQuanCaffee.Models;
++namespace QuanLiQuanCaffee.Controllers;
++[ApiController, Route("api/categories"), ApiExplorerSettings(GroupName = "catalog")]
++[Authorize(Roles = "Admin,Staff"), AutoValidateAntiforgeryToken]
++public class CategoriesApiController : ControllerBase
++{
++    private readonly AppDbContext db;
++    public CategoriesApiController(AppDbContext db) { this.db = db; }
++    public class Input { [Required, StringLength(100)] public string Name { get; set; } = ""; }
++    [HttpGet]
++    public async Task<IActionResult> List() => Ok(await db.Categories.AsNoTracking()
++        .OrderBy(c => c.Name).Select(c => new { c.CategoryID, c.Name }).ToListAsync());
++    [HttpGet("{id:int}")]
++    public async Task<IActionResult> Get(int id)
++    {
++        var c = await db.Categories.AsNoTracking().Where(c => c.CategoryID == id)
++            .Select(c => new { c.CategoryID, c.Name }).FirstOrDefaultAsync();
++        return c == null ? NotFound() : Ok(c);
++    }
++    [HttpPost, Authorize(Roles = "Admin")]
++    public async Task<IActionResult> Create(Input input)
++    {
++        if (string.IsNullOrWhiteSpace(input.Name)) return BadRequest(new { message="Tên không được trống." });
++        var c = new Category { Name=input.Name.Trim() }; db.Categories.Add(c);
++        await db.SaveChangesAsync(); return CreatedAtAction(nameof(Get), new { id=c.CategoryID }, new { c.CategoryID, c.Name });
++    }
++    [HttpPut("{id:int}"), Authorize(Roles = "Admin")]
++    public async Task<IActionResult> Update(int id, Input input)
++    {
++        if (string.IsNullOrWhiteSpace(input.Name)) return BadRequest(new { message="Tên không được trống." });
++        var c=await db.Categories.FindAsync(id); if(c==null) return NotFound();
++        c.Name=input.Name.Trim(); await db.SaveChangesAsync(); return Ok(new { c.CategoryID, c.Name });
++    }
++    [HttpDelete("{id:int}"), Authorize(Roles = "Admin")]
++    public async Task<IActionResult> Delete(int id)
++    {
++        using var tx=await db.Database.BeginTransactionAsync(IsolationLevel.Serializable);
++        var c=await db.Categories.FindAsync(id); if(c==null) return NotFound();
++        if(await db.Products.AnyAsync(p=>p.CategoryID==id)) return Conflict(new {message="Danh mục còn món, không thể xóa."});
++        db.Categories.Remove(c); await db.SaveChangesAsync(); await tx.CommitAsync(); return NoContent();
++    }
++}
+--- a/src/Controllers/CustomersApiController.cs
++++ b/src/Controllers/CustomersApiController.cs
+@@ -0,0 +1,87 @@
++using System.ComponentModel.DataAnnotations;
++using System.Data;
++using Microsoft.AspNetCore.Authorization;
++using Microsoft.AspNetCore.Mvc;
++using Microsoft.EntityFrameworkCore;
++using QuanLiQuanCaffee.Models;
++namespace QuanLiQuanCaffee.Controllers;
++[ApiController, Route("api/customers"), ApiExplorerSettings(GroupName="customers")]
++[Authorize(Roles="Admin,Staff"), AutoValidateAntiforgeryToken]
++public class CustomersApiController : ControllerBase
++{
++    private readonly AppDbContext db;
++    public CustomersApiController(AppDbContext db) { this.db=db; }
++    public class Input
++    {
++        [Required,StringLength(100)] public string Name {get;set;}="";
++        [Required,RegularExpression(@"^[0-9+]{8,20}$")] public string Phone {get;set;}="";
++        [EmailAddress,StringLength(200)] public string? Email {get;set;}
++        public bool IsActive {get;set;}=true;
++    }
++    [HttpGet]
++    public async Task<IActionResult> List(string? search=null, [Range(1,int.MaxValue)] int page=1, [Range(1,100)] int pageSize=20)
++    {
++        var q=db.CafeCustomers.AsNoTracking().AsQueryable();
++        if(!string.IsNullOrWhiteSpace(search)) q=q.Where(c=>c.Name.Contains(search.Trim()) || c.Phone.Contains(search.Trim()));
++        var offset=((long)page-1)*pageSize; if(offset>int.MaxValue) return BadRequest();
++        return Ok(new {count=await q.CountAsync(),page,pageSize,items=await q.OrderBy(c=>c.CafeCustomerId).Skip((int)offset).Take(pageSize).ToListAsync()});
++    }
++    [HttpGet("{id:int}")]
++    public async Task<IActionResult> Get(int id)
++    {
++        var c=await db.CafeCustomers.AsNoTracking().FirstOrDefaultAsync(c=>c.CafeCustomerId==id);
++        return c==null ? NotFound() : Ok(c);
++    }
++    [HttpPost]
++    public async Task<IActionResult> Create(Input input)
++    {
++        if(string.IsNullOrWhiteSpace(input.Name)) return BadRequest(new {message="Tên không được trống."});
++        if(await db.CafeCustomers.AnyAsync(c=>c.Phone==input.Phone)) return Conflict(new {message="Số điện thoại đã tồn tại."});
++        var c=new CafeCustomer {Name=input.Name.Trim(),Phone=input.Phone,Email=input.Email,IsActive=input.IsActive};
++        db.CafeCustomers.Add(c);
++        try { await db.SaveChangesAsync(); }
++        catch(DbUpdateException ex) when (ex.InnerException is Microsoft.Data.SqlClient.SqlException sql && (sql.Number==2601 || sql.Number==2627))
++        { return Conflict(new {message="Số điện thoại đã tồn tại."}); }
++        return CreatedAtAction(nameof(Get),new {id=c.CafeCustomerId},c);
++    }
++    [HttpPut("{id:int}")]
++    public async Task<IActionResult> Update(int id, Input input)
++    {
++        var c=await db.CafeCustomers.FindAsync(id); if(c==null) return NotFound();
++        if(string.IsNullOrWhiteSpace(input.Name)) return BadRequest(new {message="Tên không được trống."});
++        if(await db.CafeCustomers.AnyAsync(x=>x.CafeCustomerId!=id && x.Phone==input.Phone)) return Conflict(new {message="Số điện thoại đã tồn tại."});
++        c.Name=input.Name.Trim();c.Phone=input.Phone;c.Email=input.Email;c.IsActive=input.IsActive;
++        try {await db.SaveChangesAsync();}
++        catch(DbUpdateException ex) when (ex.InnerException is Microsoft.Data.SqlClient.SqlException sql && (sql.Number==2601 || sql.Number==2627))
++        {return Conflict(new {message="Số điện thoại đã tồn tại."});}
++        return Ok(c);
++    }
++    [HttpDelete("{id:int}"),Authorize(Roles="Admin")]
++    public async Task<IActionResult> Delete(int id)
++    {
++        var c=await db.CafeCustomers.FindAsync(id);if(c==null) return NotFound();
++        c.IsActive=false;await db.SaveChangesAsync();return Ok(new {message="Đã ngừng sử dụng hồ sơ, giữ lịch sử mua.",c.CafeCustomerId,c.IsActive});
++    }
++    [HttpGet("{id:int}/orders")]
++    public async Task<IActionResult> History(int id, [Range(1,int.MaxValue)] int page=1, [Range(1,100)] int pageSize=20)
++    {
++        if(!await db.CafeCustomers.AnyAsync(c=>c.CafeCustomerId==id)) return NotFound();
++        var q=db.Orders.AsNoTracking().Where(o=>o.CafeCustomerId==id && o.IsPaid && o.Status=="Đã thanh toán");
++        var offset=((long)page-1)*pageSize;if(offset>int.MaxValue) return BadRequest();
++        return Ok(new {count=await q.CountAsync(),page,pageSize,items=await q.OrderByDescending(o=>o.OrderTime)
++            .ThenByDescending(o=>o.OrderID).Skip((int)offset).Take(pageSize)
++            .Select(o=>new {o.OrderID,o.OrderTime,o.TotalAmount,o.PaymentMethod,o.Status}).ToListAsync()});
++    }
++    public class LinkInput { [Range(1,int.MaxValue)] public int CustomerId {get;set;} }
++    [HttpPut("/api/orders/{orderId:int}/customer")]
++    public async Task<IActionResult> Link(int orderId, LinkInput input)
++    {
++        using var tx=await db.Database.BeginTransactionAsync(IsolationLevel.Serializable);
++        var o=await db.Orders.FindAsync(orderId);if(o==null) return NotFound();
++        if(o.IsPaid || o.Status!="Đang xử lý") return Conflict(new {message="Chỉ gắn khách vào đơn đang mở."});
++        var c=await db.CafeCustomers.FindAsync(input.CustomerId);
++        if(c==null || !c.IsActive) return BadRequest(new {message="Khách không tồn tại hoặc đã ngừng sử dụng."});
++        o.CafeCustomerId=c.CafeCustomerId;o.CustomerName=c.Name;o.Phone=c.Phone;
++        await db.SaveChangesAsync();await tx.CommitAsync();return Ok(new {o.OrderID,o.CafeCustomerId});
++    }
++}
+--- a/src/Controllers/PosController.cs
++++ b/src/Controllers/PosController.cs
+@@ -518,6 +518,71 @@
+         });
+     }
+ 
++    public class CreateOrderInput
++    {
++        [Range(1,int.MaxValue)] public int TableId {get;set;}
++    }
++
++    [HttpPost("/api/orders")]
++    [ApiExplorerSettings(GroupName="pos")]
++    public async Task<IActionResult> CreateOrder([FromBody] CreateOrderInput? input)
++    {
++        if(input==null || !ModelState.IsValid) return BadRequest(new {message="Mã bàn không hợp lệ."});
++        using var tx=await db.Database.BeginTransactionAsync(IsolationLevel.Serializable);
++        var t=await db.Tables.FindAsync(input.TableId);if(t==null) return NotFound(new {message="Bàn không tồn tại."});
++        if(await Open(input.TableId)!=null) return Conflict(new {message="Bàn đã có đơn đang mở."});
++        var o=new Order {TableID=input.TableId,Status="Đang xử lý",OrderTime=DateTime.Now};
++        db.Orders.Add(o);t.Status="Đang dùng";await db.SaveChangesAsync();await tx.CommitAsync();
++        return StatusCode(201,new {orderId=o.OrderID,o.TableID,o.Status});
++    }
++
++    [HttpPost("/api/orders/{id:int}/cancel")]
++    [ApiExplorerSettings(GroupName="pos")]
++    public async Task<IActionResult> CancelEmpty(int id)
++    {
++        using var tx=await db.Database.BeginTransactionAsync(IsolationLevel.Serializable);
++        var o=await db.Orders.Include(o=>o.Details).FirstOrDefaultAsync(o=>o.OrderID==id);
++        if(o==null) return NotFound();
++        if(o.IsPaid || o.Status!="Đang xử lý" || o.Details.Any()) return Conflict(new {message="Chỉ hủy đơn đang mở và rỗng. Xóa món trước nếu cần."});
++        o.Status="Đã hủy";o.TotalAmount=0;
++        if(o.TableID.HasValue) {var t=await db.Tables.FindAsync(o.TableID.Value);if(t!=null)t.Status="Trống";}
++        await db.SaveChangesAsync();await tx.CommitAsync();return Ok(new {success=true});
++    }
++
++    public class EditLineInput
++    {
++        [Range(1,99)] public int Quantity {get;set;}=1;
++        [Required] public string Size {get;set;}="M";
++        public int Sugar {get;set;}=100;
++        public int Ice {get;set;}=100;
++        [Required] public string Topping {get;set;}="Không";
++        [MaxLength(200)] public string? Note {get;set;}
++    }
++
++    [HttpPut("/api/orders/{orderId:int}/items/{detailId:int}")]
++    [ApiExplorerSettings(GroupName="pos")]
++    public async Task<IActionResult> EditLine(int orderId,int detailId,[FromBody] EditLineInput? input)
++    {
++        if(input==null || !ModelState.IsValid) return BadRequest(new {message="Dữ liệu món không hợp lệ."});
++        using var tx=await db.Database.BeginTransactionAsync(IsolationLevel.Serializable);
++        var o=await db.Orders.Include(o=>o.Details).ThenInclude(d=>d.Product).FirstOrDefaultAsync(o=>o.OrderID==orderId);
++        if(o==null) return NotFound();
++        if(o.IsPaid || o.Status!="Đang xử lý") return Conflict(new {message="Đơn đã đóng."});
++        var d=o.Details.FirstOrDefault(d=>d.DetailID==detailId);if(d==null) return NotFound();
++        var p=d.Product;
++        if(p==null || !p.IsAvailable || !double.IsFinite(p.Price) || p.Price<0 || p.Price>10000000)
++            return BadRequest(new {message="Món không còn bán hoặc giá không hợp lệ."});
++        if(!p.SupportsCustomization) {input.Size="M";input.Sugar=100;input.Ice=100;input.Topping="Không";}
++        var prices=new Dictionary<string,decimal>{{"Không",0},{"Trân châu",5000},{"Thạch trái cây",5000},{"Kem cheese",10000}};
++        if(!(new[]{"M","L"}).Contains(input.Size) || !(new[]{0,30,50,70,100}).Contains(input.Sugar) ||
++            !(new[]{0,50,100}).Contains(input.Ice) || string.IsNullOrWhiteSpace(input.Topping) || !prices.ContainsKey(input.Topping))
++            return BadRequest(new {message="Tùy chọn không hợp lệ."});
++        d.Quantity=input.Quantity;d.Size=input.Size;d.Sugar=input.Sugar;d.Ice=input.Ice;d.Topping=input.Topping;d.Note=input.Note?.Trim()??"";
++        d.Price=(double)((decimal)p.Price+(input.Size=="L"?7000m:0m)+prices[input.Topping]);
++        o.TotalAmount=(double)Total(o);await db.SaveChangesAsync();await tx.CommitAsync();
++        return Ok(new {success=true,total=o.TotalAmount,message="Dòng món được tính lại theo giá menu hiện tại."});
++    }
++
+     // ==================== GIAO DIỆN PHIẾU THANH TOÁN ====================
+ 
+     [HttpGet]
+--- a/src/Controllers/ProductsApiController.cs
++++ b/src/Controllers/ProductsApiController.cs
+@@ -0,0 +1,76 @@
++using System.ComponentModel.DataAnnotations;
++using Microsoft.AspNetCore.Authorization;
++using Microsoft.AspNetCore.Mvc;
++using Microsoft.EntityFrameworkCore;
++using QuanLiQuanCaffee.Models;
++namespace QuanLiQuanCaffee.Controllers;
++[ApiController, Route("api/products"), ApiExplorerSettings(GroupName = "catalog")]
++[Authorize(Roles = "Admin,Staff"), AutoValidateAntiforgeryToken]
++public class ProductsApiController : ControllerBase
++{
++    private readonly AppDbContext db;
++    public ProductsApiController(AppDbContext db) { this.db=db; }
++    public class Input
++    {
++        [Required, StringLength(150)] public string Name { get; set; } = "";
++        [Range(0,10000000)] public decimal Price { get; set; }
++        [Range(1,int.MaxValue)] public int CategoryId { get; set; }
++        [StringLength(2000)] public string? Description { get; set; }
++        [StringLength(500)] public string? ImageUrl { get; set; }
++        public bool IsAvailable { get; set; } = true;
++        public bool SupportsCustomization { get; set; } = true;
++    }
++    [HttpGet]
++    public async Task<IActionResult> List(string? search=null, int? categoryId=null, bool? available=null,
++        [Range(1,int.MaxValue)] int page=1, [Range(1,100)] int pageSize=20)
++    {
++        var q=db.Products.AsNoTracking().AsQueryable();
++        if(!string.IsNullOrWhiteSpace(search)) q=q.Where(p=>p.Name.Contains(search.Trim()));
++        if(categoryId.HasValue) q=q.Where(p=>p.CategoryID==categoryId.Value);
++        if(available.HasValue) q=q.Where(p=>p.IsAvailable==available.Value);
++        var offset=((long)page-1)*pageSize;
++        if(offset>int.MaxValue) return BadRequest(new {message="Trang vượt giới hạn."});
++        var count=await q.CountAsync();
++        var items=await q.OrderBy(p=>p.ProductID).Skip((int)offset).Take(pageSize)
++            .Select(p=>new {p.ProductID,p.Name,p.Price,p.CategoryID,p.Description,p.ImageUrl,p.IsAvailable,p.SupportsCustomization}).ToListAsync();
++        return Ok(new {page,pageSize,count,items});
++    }
++    [HttpGet("{id:int}")]
++    public async Task<IActionResult> Get(int id)
++    {
++        var p=await db.Products.AsNoTracking().Where(p=>p.ProductID==id)
++            .Select(p=>new {p.ProductID,p.Name,p.Price,p.CategoryID,p.Description,p.ImageUrl,p.IsAvailable,p.SupportsCustomization}).FirstOrDefaultAsync();
++        return p==null ? NotFound() : Ok(p);
++    }
++    private async Task<bool> Valid(Input input) => !string.IsNullOrWhiteSpace(input.Name)
++        && await db.Categories.AnyAsync(c=>c.CategoryID==input.CategoryId)
++        && (string.IsNullOrWhiteSpace(input.ImageUrl) ||
++            (input.ImageUrl.StartsWith("/images/",StringComparison.Ordinal) && !input.ImageUrl.Contains("..")));
++    private static void Apply(Product p, Input i)
++    {
++        p.Name=i.Name.Trim(); p.Price=(double)i.Price; p.CategoryID=i.CategoryId;
++        p.Description=i.Description; p.ImageUrl=i.ImageUrl; p.IsAvailable=i.IsAvailable;
++        p.SupportsCustomization=i.SupportsCustomization;
++    }
++    [HttpPost, Authorize(Roles="Admin")]
++    public async Task<IActionResult> Create(Input input)
++    {
++        if(!await Valid(input)) return BadRequest(new {message="Kiểm tra tên, danh mục; ảnh dùng đường dẫn /images/... hoặc để trống."});
++        var p=new Product(); Apply(p,input); db.Products.Add(p); await db.SaveChangesAsync();
++        return CreatedAtAction(nameof(Get),new {id=p.ProductID},new {p.ProductID,p.Name,p.Price,p.IsAvailable});
++    }
++    [HttpPut("{id:int}"), Authorize(Roles="Admin")]
++    public async Task<IActionResult> Update(int id, Input input)
++    {
++        var p=await db.Products.FindAsync(id); if(p==null) return NotFound();
++        if(!await Valid(input)) return BadRequest(new {message="Tên, danh mục hoặc đường dẫn ảnh không hợp lệ."});
++        Apply(p,input); await db.SaveChangesAsync(); return Ok(new {p.ProductID,p.Name,p.Price,p.IsAvailable});
++    }
++    [HttpDelete("{id:int}"), Authorize(Roles="Admin")]
++    public async Task<IActionResult> Delete(int id)
++    {
++        var p=await db.Products.FindAsync(id); if(p==null) return NotFound();
++        p.IsAvailable=false; await db.SaveChangesAsync();
++        return Ok(new {message="Đã ngừng bán; giữ món để bảo toàn lịch sử đơn.",p.ProductID,p.IsAvailable});
++    }
++}
+--- a/src/Controllers/StatisticsApiController.cs
++++ b/src/Controllers/StatisticsApiController.cs
+@@ -0,0 +1,42 @@
++using System.ComponentModel.DataAnnotations;
++using Microsoft.AspNetCore.Authorization;
++using Microsoft.AspNetCore.Mvc;
++using Microsoft.EntityFrameworkCore;
++using QuanLiQuanCaffee.Models;
++namespace QuanLiQuanCaffee.Controllers;
++[ApiController,Route("api/statistics"),ApiExplorerSettings(GroupName="statistics")]
++[Authorize(Roles="Admin")]
++public class StatisticsApiController : ControllerBase
++{
++    private readonly AppDbContext db;
++    public StatisticsApiController(AppDbContext db) {this.db=db;}
++    private static bool Valid(DateTime from,DateTime to) => from<to && (to-from).TotalDays<=366;
++    private IQueryable<Order> InRange(DateTime from,DateTime to) => db.Orders.AsNoTracking().Where(o=>o.OrderTime>=from && o.OrderTime<to);
++    [HttpGet("revenue")]
++    public async Task<IActionResult> Revenue([FromQuery,Required] DateTime? from,[FromQuery,Required] DateTime? to)
++    {
++        if(!from.HasValue || !to.HasValue || !Valid(from.Value,to.Value)) return BadRequest(new {message="Cần from < to, tối đa 366 ngày; to không bao gồm."});
++        var q=InRange(from.Value,to.Value).Where(o=>o.IsPaid && o.Status=="Đã thanh toán");
++        var revenue=await q.SumAsync(o=>(decimal?)o.TotalAmount) ?? 0m;
++        return Ok(new {from,to,revenue,currency="VND",timeBasis="OrderTime: thời điểm tạo đơn",paidOrders=await q.CountAsync()});
++    }
++    [HttpGet("orders")]
++    public async Task<IActionResult> Orders([FromQuery,Required] DateTime? from,[FromQuery,Required] DateTime? to)
++    {
++        if(!from.HasValue || !to.HasValue || !Valid(from.Value,to.Value)) return BadRequest(new {message="Khoảng thời gian không hợp lệ, tối đa 366 ngày."});
++        var q=InRange(from.Value,to.Value);
++        return Ok(new {from,to,total=await q.CountAsync(),paid=await q.CountAsync(o=>o.IsPaid && o.Status=="Đã thanh toán"),
++            open=await q.CountAsync(o=>!o.IsPaid && o.Status=="Đang xử lý"),cancelled=await q.CountAsync(o=>o.Status=="Đã hủy")});
++    }
++    [HttpGet("best-sellers")]
++    public async Task<IActionResult> Best([FromQuery,Required] DateTime? from,[FromQuery,Required] DateTime? to,[Range(1,50)] int top=5)
++    {
++        if(!from.HasValue || !to.HasValue || !Valid(from.Value,to.Value)) return BadRequest(new {message="Khoảng thời gian không hợp lệ, tối đa 366 ngày."});
++        var ids=InRange(from.Value,to.Value).Where(o=>o.IsPaid && o.Status=="Đã thanh toán").Select(o=>o.OrderID);
++        var items=await db.OrderDetails.AsNoTracking().Where(d=>ids.Contains(d.OrderID))
++            .GroupBy(d=>new {d.ProductID,Name=d.Product==null ? "Món đã lưu" : d.Product.Name})
++            .Select(g=>new {g.Key.ProductID,g.Key.Name,quantity=g.Sum(d=>(long)d.Quantity),grossAmount=g.Sum(d=>(decimal)d.Price*d.Quantity)})
++            .OrderByDescending(x=>x.quantity).ThenBy(x=>x.ProductID).Take(top).ToListAsync();
++        return Ok(new {from,to,top,items});
++    }
++}
+--- a/src/Controllers/TablesApiController.cs
++++ b/src/Controllers/TablesApiController.cs
+@@ -0,0 +1,35 @@
++using System.ComponentModel.DataAnnotations;
++using System.Data;
++using Microsoft.AspNetCore.Authorization;
++using Microsoft.AspNetCore.Mvc;
++using Microsoft.EntityFrameworkCore;
++using QuanLiQuanCaffee.Models;
++namespace QuanLiQuanCaffee.Controllers;
++[ApiController, Route("api/tables"), ApiExplorerSettings(GroupName="tables")]
++[Authorize(Roles="Admin,Staff"), AutoValidateAntiforgeryToken]
++public class TablesApiController : ControllerBase
++{
++    private readonly AppDbContext db;
++    public TablesApiController(AppDbContext db) { this.db=db; }
++    [HttpGet]
++    public async Task<IActionResult> List() => Ok(await db.Tables.AsNoTracking().OrderBy(t=>t.TableID)
++        .Select(t=>new {t.TableID,t.Name,t.Status}).ToListAsync());
++    [HttpGet("{id:int}")]
++    public async Task<IActionResult> Get(int id)
++    {
++        var t=await db.Tables.AsNoTracking().FirstOrDefaultAsync(t=>t.TableID==id);
++        return t==null ? NotFound() : Ok(new {t.TableID,t.Name,t.Status});
++    }
++    public class StatusInput { [Required] public string Status {get;set;}="Trống"; }
++    [HttpPut("{id:int}/status"), Authorize(Roles="Admin")]
++    public async Task<IActionResult> Status(int id, StatusInput input)
++    {
++        if(input.Status!="Trống" && input.Status!="Đang dùng") return BadRequest(new {message="Chỉ nhận Trống hoặc Đang dùng."});
++        using var tx=await db.Database.BeginTransactionAsync(IsolationLevel.Serializable);
++        var table=await db.Tables.FindAsync(id); if(table==null) return NotFound();
++        var busy=await db.Orders.AnyAsync(o=>o.TableID==id && !o.IsPaid && o.Status=="Đang xử lý");
++        var expected=busy ? "Đang dùng" : "Trống";
++        if(input.Status!=expected) return Conflict(new {message="Trạng thái phải khớp đơn đang mở. Không thể giải phóng bàn còn đơn.",expected});
++        table.Status=expected; await db.SaveChangesAsync(); await tx.CommitAsync(); return Ok(new {table.TableID,table.Status});
++    }
++}
+--- a/src/Models/AppDbContext.cs
++++ b/src/Models/AppDbContext.cs
+@@ -11,6 +11,7 @@
+         {
+         }
+ 
++        public DbSet<CafeCustomer> CafeCustomers { get; set; }
+         public DbSet<Product> Products { get; set; }
+         public DbSet<Category> Categories { get; set; }
+         public DbSet<Order> Orders { get; set; }
+@@ -23,6 +24,9 @@
+         protected override void OnModelCreating(ModelBuilder builder)
+         {
+             base.OnModelCreating(builder);
++            builder.Entity<CafeCustomer>().HasIndex(c => c.Phone).IsUnique();
++            builder.Entity<Order>().HasOne(o => o.CafeCustomer).WithMany()
++                .HasForeignKey(o => o.CafeCustomerId).OnDelete(DeleteBehavior.Restrict);
+ 
+             // 1. Cấu hình để OrderDetail biết nó thuộc về Order nào (Quan hệ 1-N)
+             builder.Entity<OrderDetail>()
+--- a/src/Models/CafeCustomer.cs
++++ b/src/Models/CafeCustomer.cs
+@@ -0,0 +1,13 @@
++using System.ComponentModel.DataAnnotations;
++using System.ComponentModel.DataAnnotations.Schema;
++namespace QuanLiQuanCaffee.Models;
++[Table("CafeCustomers", Schema = "dbo")]
++public class CafeCustomer
++{
++    [Key] public int CafeCustomerId { get; set; }
++    [Required, MaxLength(100)] public string Name { get; set; } = "";
++    [Required, MaxLength(20)] public string Phone { get; set; } = "";
++    [MaxLength(200)] public string? Email { get; set; }
++    public bool IsActive { get; set; } = true;
++    public DateTime CreatedAt { get; set; } = DateTime.Now;
++}
+--- a/src/Models/Order.cs
++++ b/src/Models/Order.cs
+@@ -6,6 +6,8 @@
+     {
+         [Key]
+         public int OrderID { get; set; }
++        public int? CafeCustomerId { get; set; }
++        public CafeCustomer? CafeCustomer { get; set; }
+ 
+         public int? TableID { get; set; }
+         public Table? Table { get; set; }
+--- a/src/Program.cs
++++ b/src/Program.cs
+@@ -29,6 +29,22 @@
+ 
+ builder.Services.ConfigureApplicationCookie(options =>
+ {
++    options.Events.OnRedirectToLogin = context =>
++    {
++        if (context.Request.Path.StartsWithSegments("/api") ||
++            context.Request.Path.StartsWithSegments("/dev/antiforgery"))
++            context.Response.StatusCode = 401;
++        else context.Response.Redirect(context.RedirectUri);
++        return Task.CompletedTask;
++    };
++    options.Events.OnRedirectToAccessDenied = context =>
++    {
++        if (context.Request.Path.StartsWithSegments("/api") ||
++            context.Request.Path.StartsWithSegments("/dev/antiforgery"))
++            context.Response.StatusCode = 403;
++        else context.Response.Redirect(context.RedirectUri);
++        return Task.CompletedTask;
++    };
+     options.Cookie.HttpOnly = true;
+     options.Cookie.SameSite = SameSiteMode.Lax;
+     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+@@ -74,9 +90,9 @@
+         Description = "Kiểm thử API bán hàng và thanh toán."
+     });
+ 
+-    // Chỉ đưa các action thuộc nhóm pos vào tài liệu.
++    // Các nhóm API đã triển khai.
+     options.DocInclusionPredicate((documentName, api) =>
+-        documentName == "v1" && api.GroupName == "pos");
++        documentName == "v1" && new[] { "pos", "catalog", "tables", "customers", "statistics" }.Contains(api.GroupName));
+ });
+ 
+ // ==================== 6. KHỞI TẠO ỨNG DỤNG ====================
+--- a/src/Views/ApiDashboard/Index.cshtml
++++ b/src/Views/ApiDashboard/Index.cshtml
+@@ -0,0 +1,7 @@
++@{ Layout = null; }
++<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Chill COFÉ • Thống kê</title><link rel="stylesheet" href="/css/api-dashboard.css"></head>
++<body><main><a href="/">← Trang chủ</a><h1>Chill COFÉ · Dashboard</h1><p>Doanh thu từ các đơn đã thanh toán, lọc theo thời điểm tạo đơn. Đơn vị: VNĐ.</p>
++<form id="filters"><label>Từ ngày <input type="date" id="from" required></label><label>Đến hết ngày <input type="date" id="to" required></label><button id="load">Xem thống kê</button></form>
++<p id="state" role="status"></p><section class="cards"><article>Doanh thu<strong id="revenue">—</strong></article><article>Đơn đã thanh toán<strong id="paid">—</strong></article><article>Tổng số đơn<strong id="total">—</strong></article><article>Đơn đã hủy<strong id="cancelled">—</strong></article></section>
++<h2>Món bán chạy</h2><p>Xếp hạng theo tổng số lượng trong các đơn đã thanh toán.</p><div id="bars"></div><table><thead><tr><th>Món</th><th>Số lượng</th><th>Thành tiền trước giảm giá</th></tr></thead><tbody id="rows"></tbody></table><p id="empty" hidden>Không có dữ liệu trong khoảng ngày này.</p>
++</main><script src="/js/api-dashboard.js"></script></body></html>
+--- a/src/wwwroot/css/api-dashboard.css
++++ b/src/wwwroot/css/api-dashboard.css
+@@ -0,0 +1 @@
++*{box-sizing:border-box}body{margin:0;background:#faf8f1;color:#25382e;font:16px system-ui,sans-serif}main{max-width:1100px;margin:auto;padding:32px 20px}a{color:#365845}h1{font-size:32px}p{line-height:1.6}form{display:flex;gap:16px;flex-wrap:wrap;align-items:end;margin:24px 0}label{display:grid;gap:8px}input,button{font:inherit;padding:12px;border:1px solid #a4b2a9;border-radius:8px}button{background:#365845;color:white;cursor:pointer}.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}article{background:white;padding:22px;border:1px solid #d5ded7;border-radius:12px}strong{display:block;font-size:26px;margin-top:12px}table{width:100%;border-collapse:collapse;margin-top:20px}td,th{text-align:left;padding:12px;border-bottom:1px solid #d5ded7}#bars>div{margin:12px 0}#bars span{display:block;background:#487754;height:16px;border-radius:5px;margin-top:5px}#state{min-height:24px}button:disabled{opacity:.6}--- a/src/wwwroot/js/api-dashboard.js
++++ b/src/wwwroot/js/api-dashboard.js
+@@ -0,0 +1,30 @@
++(() => {
++    const el = id => document.getElementById(id);
++    const fmt = n => Number(n).toLocaleString('vi-VN');
++    const dateText = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
++    const now = new Date();el('to').value=dateText(now);el('from').value=dateText(new Date(now.getFullYear(),now.getMonth(),1));
++    function clear() { ['revenue','paid','total','cancelled'].forEach(id=>el(id).textContent='—');el('rows').replaceChildren();el('bars').replaceChildren();el('empty').hidden=true; }
++    async function read(url) {
++        const r=await fetch(url,{credentials:'same-origin',cache:'no-store'});
++        if(!r.ok || r.redirected) throw new Error(r.status===401||r.status===403||r.redirected ? 'Cần đăng nhập bằng tài khoản Admin.' : 'Không tải được dữ liệu. Kiểm tra khoảng ngày và kết nối.');
++        return r.json();
++    }
++    el('filters').addEventListener('submit',async e=>{
++        e.preventDefault();clear();el('load').disabled=true;el('state').textContent='Đang tải…';
++        try {
++            if(!el('from').value || !el('to').value || el('from').value>el('to').value) throw new Error('Chọn ngày bắt đầu không sau ngày kết thúc.');
++            const end=new Date(el('to').value+'T00:00:00');end.setDate(end.getDate()+1);
++            const q=new URLSearchParams({from:el('from').value+'T00:00:00',to:dateText(end)+'T00:00:00'});
++            const [r,o,b]=await Promise.all([read('/api/statistics/revenue?'+q),read('/api/statistics/orders?'+q),read('/api/statistics/best-sellers?'+q)]);
++            el('revenue').textContent=fmt(r.revenue)+' đ';el('paid').textContent=fmt(o.paid);el('total').textContent=fmt(o.total);el('cancelled').textContent=fmt(o.cancelled);
++            const max=Math.max(1,...b.items.map(x=>x.quantity));
++            for(const item of b.items) {
++                const tr=document.createElement('tr');[item.name,fmt(item.quantity),fmt(item.grossAmount)+' đ'].forEach(text=>{const td=document.createElement('td');td.textContent=text;tr.append(td);});el('rows').append(tr);
++                const bar=document.createElement('div');bar.textContent=item.name+' · '+fmt(item.quantity);const fill=document.createElement('span');fill.style.width=(item.quantity/max*100)+'%';bar.append(fill);el('bars').append(bar);
++            }
++            el('empty').hidden=b.items.length!==0;el('state').textContent='Đã cập nhật '+new Date().toLocaleTimeString('vi-VN');
++        } catch(error) { clear();el('state').textContent=error.message; }
++        finally {el('load').disabled=false;}
++    });
++    el('filters').requestSubmit();
++})();

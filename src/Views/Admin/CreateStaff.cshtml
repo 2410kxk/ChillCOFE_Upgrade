@@ -1,20 +1,2 @@
-<h2>Tạo tài khoản nhân viên</h2>
-
-<form method="post">
-    <div class="mb-3">
-        <label>Email</label>
-        <input name="email" class="form-control" />
-    </div>
-
-    <div class="mb-3">
-        <label>Password</label>
-        <input name="password" type="password" class="form-control" />
-    </div>
-
-    <button class="btn btn-success">Tạo</button>
-</form>
-
-@if (ViewBag.Msg != null)
-{
-    <p class="text-danger mt-3">@ViewBag.Msg</p>
-}
+@{ ViewData["Title"] = "Tạo tài khoản nhân viên"; }
+<section class="ux-page"><header class="ux-page-head"><div><p class="lx-kicker">QUẢN TRỊ / TÀI KHOẢN</p><h1>Tạo tài khoản nhân viên</h1><p class="ux-subtitle"></p></div><div class="ux-head-actions"></div></header><div class="ux-form-layout"><form method="post" class="ux-panel">@Html.AntiForgeryToken()<div asp-validation-summary="All" class="text-danger"></div><h2>Thông tin đăng nhập</h2><div class="ch-field"><label for="staff-email">Email</label><input id="staff-email" name="email" type="email" autocomplete="email" required/></div><div class="ch-field"><label for="staff-password">Mật khẩu</label><input id="staff-password" name="password" type="password" autocomplete="new-password" required/></div><button class="lx-button" type="submit">Tạo tài khoản </button>@if(ViewBag.Msg != null){<p class="ux-form-message" role="status">@ViewBag.Msg</p>}</form><aside class="ux-panel ux-note-panel"><p class="lx-kicker">TEAM ACCESS</p><h2>Mỗi thành viên.<br>Một tài khoản riêng.</h2><p>Dùng email của người được cấp quyền và trao đổi thông tin đăng nhập qua kênh riêng.</p></aside></div></section>

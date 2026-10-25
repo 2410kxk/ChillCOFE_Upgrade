@@ -16,11 +16,11 @@ public class StatisticsController : Controller
         // 1. Thống kê tổng quan
         ViewBag.TotalOrders = await _context.Orders.CountAsync(o => o.Status == "Đã thanh toán");
         ViewBag.TodayRevenue = await _context.Orders
-            .Where(o => o.OrderTime.Date == today && o.Status == "Đã thanh toán")
+            .Where(o => (o.PaidAt ?? o.OrderTime).Date == today && o.Status == "Đã thanh toán")
             .SumAsync(o => o.TotalAmount);
 
         ViewBag.MonthRevenue = await _context.Orders
-            .Where(o => o.OrderTime.Month == today.Month && o.OrderTime.Year == today.Year && o.Status == "Đã thanh toán")
+            .Where(o => (o.PaidAt ?? o.OrderTime).Month == today.Month && (o.PaidAt ?? o.OrderTime).Year == today.Year && o.Status == "Đã thanh toán")
             .SumAsync(o => o.TotalAmount);
 
         // 2. Lấy dữ liệu cho biểu đồ (7 ngày gần nhất)
@@ -30,8 +30,8 @@ public class StatisticsController : Controller
             .ToList();
 
         var revenueData = await _context.Orders
-            .Where(o => o.OrderTime >= today.AddDays(-7) && o.Status == "Đã thanh toán")
-            .GroupBy(o => o.OrderTime.Date)
+            .Where(o => (o.PaidAt ?? o.OrderTime) >= today.AddDays(-7) && o.Status == "Đã thanh toán")
+            .GroupBy(o => (o.PaidAt ?? o.OrderTime).Date)
             .Select(g => new { Date = g.Key, Amount = g.Sum(x => x.TotalAmount) })
             .ToListAsync();
 
@@ -48,7 +48,7 @@ public class StatisticsController : Controller
 
         // 1. Lấy danh sách đơn hàng đã thanh toán trong ngày
         var ordersToday = await _context.Orders
-            .Where(o => o.OrderTime.Date == today && o.Status == "Đã thanh toán")
+            .Where(o => (o.PaidAt ?? o.OrderTime).Date == today && o.Status == "Đã thanh toán")
             .Include(o => o.Details)
             .ThenInclude(d => d.Product)
             .ToListAsync();
@@ -60,7 +60,7 @@ public class StatisticsController : Controller
         // 3. Thống kê số lượng từng món bán ra
         var productStats = ordersToday
             .SelectMany(o => o.Details)
-            .GroupBy(d => d.Product.Name)
+            .GroupBy(d => d.Product?.Name ?? "Món đã lưu")
             .Select(g => new
             {
                 name = g.Key,

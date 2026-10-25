@@ -4,6 +4,7 @@
     using Microsoft.EntityFrameworkCore;
     using QuanLiQuanCaffee.Models;
 
+    [AutoValidateAntiforgeryToken]
     [Authorize(Roles = "Admin,Staff,User")]
     public class OrderController : BaseController
     {
@@ -57,34 +58,7 @@ public IActionResult GetCartSidebar()
     // Action cho khách mua Online
     [HttpPost]
     public IActionResult AddToOnlineCart(int id)
-    {
-        var product = _context.Products.Find(id);
-
-        if (product == null || !product.IsAvailable)
-            return Json(new { success = false, message = "Món hiện không phục vụ" });
-
-        var cart = GetOnlineCart();
-        var item = cart.FirstOrDefault(x => x.ProductID == id);
-
-        if (item == null)
-        {
-            cart.Add(new OrderDetail
-            {
-                ProductID = id,
-                Quantity = 1,
-                Price = product.Price
-                // ❌ KHÔNG lưu Product
-            });
-        }
-        else
-        {
-            item.Quantity++;
-        }
-
-        SaveOnlineCart(cart);
-
-        return Json(new { count = cart.Sum(x => x.Quantity) });
-    }
+    { return StatusCode(410, "Sử dụng /Online/Add."); }
     //Bạn cần một Action trả về Partial View chứa danh sách món để AJAX nạp vào:
     [Authorize(Roles = "Admin,Staff")]
 public IActionResult GetCartPartial()
@@ -264,7 +238,7 @@ public IActionResult Checkout()
                 return Json(0);
 
             var count = _context.OrderDetails
-                .Where(d => d.Order.TableID == tableId && d.Order.Status == "Đang xử lý")
+                .Where(d => d.Order != null && d.Order.TableID == tableId && d.Order.Status == "Đang xử lý")
                 .Sum(d => d.Quantity);
 
             return Json(count);
@@ -295,7 +269,7 @@ public IActionResult GetOrderDetailsJson(int id)
         {
             orderId = order.OrderID,
             // Kiểm tra logic hiển thị tên khách hoặc bàn
-            customer = order.Status == "Online" ? $"{order.CustomerName} ({order.Phone})" : $"Bàn {order.TableID}",
+            customer = (order.IsOnline || order.Status == "Online") ? $"{order.CustomerName} ({order.Phone})" : $"Bàn {order.TableID}",
             time = order.OrderTime.ToString("dd/MM/yyyy HH:mm"),
             address = order.Address ?? "Tại quán",
             status = order.Status,
@@ -317,60 +291,10 @@ public IActionResult GetOrderDetailsJson(int id)
     [Authorize(Roles = "Admin")]
     [ValidateAntiForgeryToken]
     public IActionResult ConfirmOnlinePayment(int orderId)
-    {
-        var order = _context.Orders.Include(o => o.Details).FirstOrDefault(o => o.OrderID == orderId && o.Status == "Online" && !o.IsPaid);
-
-        if (order != null)
-        {
-            // Cập nhật trạng thái để AdminController có thể tính vào doanh thu
-            order.TotalAmount = order.Details.Sum(d => d.Quantity * d.Price);
-            order.IsPaid = true;
-            order.Status = "Đã thanh toán";
-            _context.SaveChanges();
-
-            return Json(new { success = true });
-        }
-
-        return Json(new { success = false, message = "Không tìm thấy đơn hàng hoặc trạng thái không hợp lệ." });
-    }
+    { return StatusCode(410, "Sử dụng trang /Online/Deliveries để xác nhận giao hàng."); }
 
     [HttpPost]
     public IActionResult PlaceOnlineOrder(string name, string phone, string address)
-    {
-        var cart = GetOnlineCart();
-
-        if (cart == null || !cart.Any())
-            return Json(new { success = false });
-
-        var order = new Order
-        {
-            OrderTime = DateTime.Now,
-            Status = "Online",
-            CustomerName = name,
-            Phone = phone,
-            Address = address
-        };
-
-        _context.Orders.Add(order);
-        _context.SaveChanges();
-
-        foreach (var item in cart)
-        {
-            _context.OrderDetails.Add(new OrderDetail
-            {
-                OrderID = order.OrderID,
-                ProductID = item.ProductID,
-                Quantity = item.Quantity,
-                Price = item.Price
-            });
-        }
-
-        _context.SaveChanges();
-
-        // 🔥 XÓA GIỎ ONLINE
-        HttpContext.Session.Remove("OnlineCart");
-
-        return Json(new { success = true });
-    }
+    { return StatusCode(410, "Sử dụng /Online/Checkout."); }
 }
 

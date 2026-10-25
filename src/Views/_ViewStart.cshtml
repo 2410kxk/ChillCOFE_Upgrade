@@ -1,3 +1,11 @@
 @{
     Layout = "_Layout";
+    var sectionName = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    var workControllers = new[] { "Admin", "CatalogAdmin", "Employee", "Shift", "Table", "Statistics", "ApiDashboard", "Pos", "Staff", "StoreSettings" };
+    var isWorkspace = workControllers.Contains(sectionName) && (User.IsInRole("Admin") || User.IsInRole("Staff"));
+    if (sectionName == "Order" && new[] { "Manage", "Tables", "Menu", "Checkout" }.Contains(ViewContext.RouteData.Values["action"]?.ToString() ?? "")) { isWorkspace = User.IsInRole("Admin") || User.IsInRole("Staff"); }
+    if (sectionName == "Product" && new[] { "Create", "Edit", "Delete" }.Contains(ViewContext.RouteData.Values["action"]?.ToString() ?? "")) { isWorkspace = User.IsInRole("Admin"); }
+    if ((sectionName == "Reviews" || sectionName == "Notifications") && (ViewContext.RouteData.Values["action"]?.ToString() == "Manage")) isWorkspace = User.IsInRole("Admin");
+    if (sectionName == "Online" && ViewContext.RouteData.Values["action"]?.ToString() == "Deliveries") isWorkspace = User.IsInRole("Admin") || User.IsInRole("Staff");
+    ViewData["Workspace"] = isWorkspace;
 }

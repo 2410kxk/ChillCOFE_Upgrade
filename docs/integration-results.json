@@ -1,0 +1,170 @@
+{
+  "environment": "Isolated SQLite test host, not SQL Server; synthetic accounts/data",
+  "results": [
+    {
+      "name": "Trang chủ công khai",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Khách chưa đăng nhập không vào hồ sơ",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Đăng nhập alice",
+      "passed": true,
+      "detail": "302"
+    },
+    {
+      "name": "Đăng nhập bob",
+      "passed": true,
+      "detail": "302"
+    },
+    {
+      "name": "Đăng nhập staff",
+      "passed": true,
+      "detail": "302"
+    },
+    {
+      "name": "Đăng nhập admin",
+      "passed": true,
+      "detail": "302"
+    },
+    {
+      "name": "Render /Admin",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "Render /Reviews/Manage",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "Render /Notifications/Manage",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "Render /StoreSettings",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "Render /ApiDashboard",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "Render /Table",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "Render /Pos/Tables",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "Render /Cafe/Menu",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "Render /Profile",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "Render /Profile/Password",
+      "passed": true,
+      "detail": "200"
+    },
+    {
+      "name": "Chặn ghi thiếu CSRF",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Chặn sao ngoài 1–5",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Tạo đánh giá và tải ảnh",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Không xóa đánh giá người khác",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Không sửa đánh giá người khác",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Bình luận hiện nhãn Staff/Manager",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Staff không tạo thông báo quản lý",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Thông báo đúng nhóm User",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Thông báo đúng nhóm Staff",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Không đánh dấu thông báo ngoài nhóm",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Đánh dấu đã đọc lặp lại an toàn",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Lưu tên và điện thoại",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Không đổi mật khẩu khi mật khẩu cũ sai",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Đổi mật khẩu đúng",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Ghi chú bàn hiện ở POS",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "Manager xóa đánh giá và bình luận",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "name": "API thống kê từ chối khoảng ngày sai",
+      "passed": true,
+      "detail": ""
+    }
+  ]
+}

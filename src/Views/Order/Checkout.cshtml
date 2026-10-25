@@ -1,13 +1,11 @@
 @model QuanLiQuanCaffee.Models.Order
-@{ ViewData["Title"] = "Thanh toán | Chill COFÉ"; }
-<div class="container py-4">
-    <h1>Thanh toán đơn #@Model.OrderID</h1>
-    <table class="table"><thead><tr><th>Món</th><th>Số lượng</th><th>Thành tiền</th></tr></thead><tbody>
+@{ ViewData["Title"] = "Kiểm tra đơn trước thanh toán"; }
+<section class="ux-page"><header class="ux-page-head"><div><p class="lx-kicker">BÁN HÀNG / THANH TOÁN</p><h1>Kiểm tra đơn trước thanh toán</h1><p class="ux-subtitle"></p></div><div class="ux-head-actions"></div></header><div class="ux-panel"><p class="ux-badge">Đơn #@Model.OrderID</p><div class="table-responsive"><table class="table"><thead><tr><th>Món</th><th>Số lượng</th><th>Thành tiền</th></tr></thead><tbody>
     @foreach (var line in Model.Details) {
         <tr><td>@line.Product?.Name</td><td>@line.Quantity</td><td>@((line.Price * line.Quantity).ToString("N0")) đ</td></tr>
     }
-    </tbody></table>
+    </tbody></table></div>
     <p>Tổng tiền: <strong>@Model.Details.Sum(d => d.Price * d.Quantity).ToString("N0") đ</strong></p>
     <p>Thu ngân xác nhận đã nhận tiền trước khi ghi nhận thanh toán.</p>
     <a class="btn btn-primary" href="/Order/Menu?tableId=@Model.TableID">Về màn hình bán hàng để thanh toán</a>
-</div>
+</div></section>

@@ -21,6 +21,7 @@
       category = button.dataset.filter;
       root.querySelectorAll('[data-filter]').forEach(b => b.classList.toggle('active', b === button)); filter();
     }));
+    if(search)search.value=new URLSearchParams(location.search).get('search')||'';
     search?.addEventListener('input', filter); sort?.addEventListener('change', filter); filter();
   });
   const root = document.querySelector('[data-pos]');

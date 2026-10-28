@@ -154,7 +154,7 @@ public class ShiftController : Controller
             .Where(s => s.Date.Date == date.Date && s.ShiftNumber == shiftNumber)
             .ToListAsync();
 
-        int countPosition = currentStaffInShift.Count(s => s.Employee.Position == emp.Position);
+        int countPosition = currentStaffInShift.Count(s => s.Employee?.Position == emp.Position);
 
         if (emp.Position == "Pha chế" && countPosition >= 2)
             return Json(new { success = false, message = "Ca này đã đủ 2 nhân viên Pha chế!" });

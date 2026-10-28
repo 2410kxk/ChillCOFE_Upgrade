@@ -2,15 +2,15 @@
     ViewData["Title"] = "Thống kê doanh thu";
 }
 
-<div class="container mt-4">
+<section class="ux-page ux-report"><header class="ux-page-head"><div><p class="lx-kicker">BÁO CÁO / DOANH THU</p><h1>Những con số kể câu chuyện.</h1><p class="ux-subtitle">Theo dõi kết quả bán hàng và báo cáo thu ngân.</p></div><div class="ux-head-actions"></div></header><div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold text-danger">BÁO CÁO DOANH THU - Chill COFÉ</h2>
+        <h2 class="fw-bold text-danger">Tổng quan doanh thu</h2>
         <div>
             <button class="btn btn-info text-white shadow-sm me-2" onclick="showRevenueDetail()">
                 <i class="bi bi-file-earmark-bar-graph"></i> Xem chi tiết
             </button>
-            <button class="btn btn-dark shadow-sm" onclick="handleSync()">
-                <i class="bi bi-arrow-repeat"></i> Đồng bộ dữ liệu
+            <button class="btn btn-dark shadow-sm" onclick="window.location.reload()">
+                <i class="bi bi-arrow-repeat"></i> Làm mới báo cáo
             </button>
         </div>
     </div>
@@ -60,15 +60,15 @@
             <div class="modal-body bg-light" id="reportPrintArea">
                 <div class="p-4 bg-white border border-secondary shadow-sm">
                     <div class="text-center mb-3">
-                        <h4 class="fw-bold text-uppercase mb-0">Pho Coffé</h4>
+                        <h4 class="fw-bold text-uppercase mb-0">Chill COFÉ</h4>
                         <p class="mb-0">Ngày báo cáo: <span id="rep-date" class="fw-bold"></span></p>
                         <hr class="my-2">
                     </div>
 
-                    <table class="table table-sm table-borderless">
+                    <div class="table-responsive"><table class="table table-sm table-borderless">
                         <tbody id="rep-content">
                             </tbody>
-                    </table>
+                    </table></div>
 
                     <div class="mt-3 pt-2 border-top text-center italic small">
                         * Báo cáo được trích xuất từ hệ thống quản lý *
@@ -85,11 +85,14 @@
     </div>
 </div>
 
+</section>
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <script>
+function uiEscape(value){const span=document.createElement('span');span.textContent=String(value ?? '');return span.innerHTML.replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+
         function showRevenueDetail() {
             // Đã sửa đường dẫn thành /Statistics/ để khớp với Controller của bạn
             fetch('/Statistics/GetRevenueDetail')
@@ -113,7 +116,7 @@
 
                     if (data.productStats && data.productStats.length > 0) {
                         data.productStats.forEach(p => {
-                            html += `<tr><td>-</td><td>${p.name}</td><td class="text-end">${p.qty} món</td></tr>`;
+                            html += `<tr><td>-</td><td>${uiEscape(p.name)}</td><td class="text-end">${p.qty} món</td></tr>`;
                         });
                     } else {
                         html += `<tr><td colspan="3" class="text-center italic">Chưa có món nào bán ra</td></tr>`;
@@ -132,7 +135,7 @@
             const area = document.getElementById('reportPrintArea');
             html2canvas(area, { scale: 2 }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'Bao_Cao_Doanh_Thu_Pho_Coffe.png';
+                link.download = 'Bao_Cao_Doanh_Thu_ChillCOFE.png';
                 link.href = canvas.toDataURL("image/png");
                 link.click();
             });
@@ -147,8 +150,8 @@
                 datasets: [{
                     label: 'Doanh thu (VNĐ)',
                     data: @Html.Raw(Json.Serialize(ViewBag.ChartValues)),
-                    borderColor: '#dc3545',
-                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                    borderColor: '#85603e',
+                    backgroundColor: 'rgba(133, 96, 62, 0.12)',
                     fill: true,
                     tension: 0.3
                 }]

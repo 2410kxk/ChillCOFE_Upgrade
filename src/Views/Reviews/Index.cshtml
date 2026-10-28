@@ -1,0 +1,21 @@
+@using System.Security.Claims
+@using QuanLiQuanCaffee.ViewModels
+@model ReviewsVm
+@{ViewData["Title"]=Model.Manage?"Quản lý đánh giá":"Đánh Giá & Trải Nghiệm"; var uid=User.FindFirstValue(ClaimTypes.NameIdentifier);}
+<section class="community-page">
+<header class="page-heading"><p class="eyebrow">CHILL COFÉ / CÙNG CHIA SẺ</p><h1>@ViewData["Title"]</h1><p>Mỗi câu chuyện giúp chúng mình chăm chút trải nghiệm tốt hơn.</p><div class="review-summary"><strong>@Model.Average.ToString("0.0") <span class="stars">★</span></strong><span>@Model.Count đánh giá</span></div></header>
+@if(!Model.Manage){
+ @if(User.Identity?.IsAuthenticated==true){<form class="surface review-compose" asp-action="Create" method="post" enctype="multipart/form-data"><h2>Khoảng chill của bạn thế nào?</h2><fieldset class="rating-picker"><legend>Chọn số sao</legend>@for(var n=1;n<=5;n++){<label><input type="radio" name="Rating" value="@n" checked="@(n==5)" required/><span>@n ★</span></label>}</fieldset><label for="review-content">Trải nghiệm của bạn</label><textarea id="review-content" name="Content" maxlength="2000" rows="4" required placeholder="Chia sẻ về món nước, không gian hoặc sự phục vụ…"></textarea><label>Ảnh trải nghiệm <input type="file" name="Image" accept="image/jpeg,image/png,image/webp"/></label><small>1 ảnh JPG, PNG hoặc WebP, tối đa 5 MB.</small><button class="lx-button">Đăng đánh giá</button></form>}
+ else{<div class="surface"><a class="lx-button" href="/Identity/Account/Login?returnUrl=/Reviews">Đăng nhập để chia sẻ</a></div>}
+}
+@if(Model.Count==0){<div class="empty-state"><h2>Chưa có câu chuyện nào.</h2><p>Hãy là người đầu tiên chia sẻ trải nghiệm tại Chill COFÉ.</p></div>}
+@foreach(var r in Model.Items){
+ var person=Model.People.GetValueOrDefault(r.UserId,new PersonLabel("Thành viên","",null));
+ <article class="surface review-card" id="review-@r.ReviewID"><header class="person-row"><div class="avatar">@if(!string.IsNullOrEmpty(person.Avatar)){<img src="@person.Avatar" alt=""/>}else{<span>@person.Name.FirstOrDefault()</span>}</div><div><strong>@person.Name</strong>@if(person.Role!=""){<span class="role-label">@person.Role</span>}<time>@r.CreatedTime.ToString("dd/MM/yyyy HH:mm")</time></div><span class="stars" aria-label="@r.Rating trên 5 sao">@(new string('★',Math.Clamp(r.Rating,0,5)))</span></header><p class="preserve-lines">@r.Content</p>
+ @if(!string.IsNullOrWhiteSpace(r.ImageUrl)){<a href="@r.ImageUrl" target="_blank" rel="noopener"><img class="review-image" src="@r.ImageUrl" alt="Ảnh trải nghiệm tại quán" loading="lazy"/></a>}
+ <div class="review-actions">@if(uid==r.UserId){<a href="/Reviews/Edit/@r.ReviewID">Chỉnh sửa</a>}@if(uid==r.UserId||User.IsInRole("Admin")){<form asp-action="Delete" method="post" data-confirm="Xóa đánh giá và các bình luận bên dưới?"><input type="hidden" name="id" value="@r.ReviewID"/><button class="text-danger">Xóa đánh giá</button></form>}</div>
+ <section class="comments"><h3>Thảo luận & phản hồi</h3>@foreach(var c in r.Comments.OrderBy(c=>c.CreatedTime).ThenBy(c=>c.CommentID)){var cp=Model.People.GetValueOrDefault(c.UserId,new PersonLabel("Thành viên","",null));<div class="comment"><strong>@cp.Name</strong>@if(cp.Role!=""){<span class="role-label">@cp.Role</span>}<time>@c.CreatedTime.ToString("dd/MM/yyyy HH:mm")</time><p class="preserve-lines">@c.Content</p>@if(uid==c.UserId||User.IsInRole("Admin")){<form asp-action="DeleteComment" method="post" data-confirm="Xóa bình luận này?"><input type="hidden" name="id" value="@c.CommentID"/><button class="quiet-button">Xóa</button></form>}</div>}
+ @if(User.Identity?.IsAuthenticated==true){<form asp-action="Comment" method="post" class="comment-form"><input type="hidden" name="id" value="@r.ReviewID"/><label class="sr-only" for="comment-@r.ReviewID">Nội dung bình luận</label><input id="comment-@r.ReviewID" name="content" required maxlength="1000" placeholder="Viết bình luận…"/><button>Gửi</button></form>}</section></article>
+}
+<nav class="pagination" aria-label="Trang đánh giá">@if(Model.Page>1){<a asp-action="@(Model.Manage?"Manage":"Index")" asp-route-page="@(Model.Page-1)">Trang trước</a>}<span>@Model.Page / @Model.Pages</span>@if(Model.Page<Model.Pages){<a asp-action="@(Model.Manage?"Manage":"Index")" asp-route-page="@(Model.Page+1)">Trang sau</a>}</nav>
+</section>

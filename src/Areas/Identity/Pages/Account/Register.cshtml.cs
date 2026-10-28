@@ -120,6 +120,12 @@ namespace QuanLiQuanCaffee.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
+                    var roleResult = await _userManager.AddToRoleAsync(user, "User");
+                    if (!roleResult.Succeeded) {
+                        await _userManager.DeleteAsync(user);
+                        ModelState.AddModelError(string.Empty, "Chưa thể tạo tài khoản người dùng. Vui lòng thử lại.");
+                        return Page();
+                    }
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);

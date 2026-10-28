@@ -1,11 +1,12 @@
+@{ ViewData["Title"] = "Bán hàng tại bàn"; }
 @model IEnumerable<QuanLiQuanCaffee.Models.Product>
 
-<div class="container-fluid">
+<div class="ux-legacy-pos">
     <div class="row">
-        <div class="col-md-7 border-end" style="height: 80vh; overflow-y: auto;">
+        <div class="col-md-7 border-end" >
             <div class="d-flex justify-content-between align-items-center mb-3">
 
-                <h4 class="fw-bold">📍 Bàn: @ViewBag.TableName</h4>
+                <h4 class="fw-bold">Bàn: @ViewBag.TableName</h4>
                 <div id="msg-area" style="display:none;"></div>
                 <input type="text" id="searchMenu" class="form-control w-50 rounded-pill" placeholder="Tìm món nhanh...">
             </div>
@@ -16,7 +17,7 @@
                     <div class="col-6 col-lg-4 product-item">
                         <div class="card h-100 border-0 shadow-sm" style="cursor:pointer; transition: 0.2s;">
                             <div class="card-body text-center">
-                                <div class="fs-2">☕</div>
+                                <img class="ux-legacy-product-photo" src="@item.ImageUrl" alt="@item.Name" loading="lazy"/>
                                 <h6 class="fw-bold mb-1">@item.Name</h6>
                                 <p class="text-danger fw-bold m-0">@item.Price.ToString("N0")đ</p>
                                 <button class="btn btn-dark w-100 rounded-pill" onclick="addToCart(@item.ProductID)">
@@ -29,8 +30,8 @@
             </div>
         </div>
 
-        <div class="col-md-5 bg-white shadow-sm p-3 rounded-3" style="height: 80vh; display: flex; flex-direction: column;">
-            <h5 class="fw-bold border-bottom pb-2">🛒 Đơn hàng: @ViewBag.TableName</h5>
+        <div class="col-md-5 bg-white shadow-sm p-3 rounded-3" >
+            <h5 class="fw-bold border-bottom pb-2">Đơn hàng: @ViewBag.TableName</h5>
 
             <div id="sidebar-cart-content" style="flex-grow: 1; overflow-y: auto;">
                 <p class="text-center text-muted mt-5">Đang tải giỏ hàng...</p>
@@ -38,7 +39,7 @@
 
             <div class="border-top pt-3">
                 <button class="btn btn-success w-100 py-3 fw-bold rounded-pill" data-bs-toggle="modal" data-bs-target="#checkoutModal">
-                    💳 THANH TOÁN NGAY
+                    Tiếp tục thanh toán
                 </button>
             </div>
         </div>
@@ -53,12 +54,12 @@
                 <div class="row g-3">
                     <div class="col-6">
                         <button class="btn btn-outline-primary w-100 py-4" onclick="confirmPOSPayment('Tiền mặt')">
-                            <div class="fs-1">💵</div> Tiền mặt
+                             Tiền mặt
                         </button>
                     </div>
                     <div class="col-6">
                         <button class="btn btn-outline-info w-100 py-4" onclick="confirmPOSPayment('Chuyển khoản')">
-                            <div class="fs-1">💳</div> Chuyển khoản
+                             Chuyển khoản
                         </button>
                     </div>
                 </div>

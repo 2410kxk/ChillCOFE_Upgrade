@@ -1,0 +1,24 @@
+@model IEnumerable<QuanLiQuanCaffee.Models.Product>
+@{
+    var drinks = (Model ?? Enumerable.Empty<QuanLiQuanCaffee.Models.Product>())
+        .Where(p => p.IsAvailable && !string.IsNullOrWhiteSpace(p.ImageUrl)).Take(6).ToList();
+}
+<div class="cf-reel" data-reel>
+<div class="cf-reel-window"><div class="cf-reel-track">
+@for (var copy = 0; copy < 2; copy++) {
+<div class="cf-reel-group" aria-hidden="@(copy == 1 ? "true" : "false")">
+@if (drinks.Count > 0) {
+for (var imageIndex=0;imageIndex<Math.Max(10,drinks.Count);imageIndex++) {
+var drink=drinks[imageIndex % drinks.Count];
+<figure><img src="@drink.ImageUrl" alt="@(copy == 0 ? drink.Name : "")" loading="lazy" decoding="async" width="280" height="280"/></figure>
+}
+} else {
+for(var i = 0; i < 3; i++) {
+<figure><img src="/images/editorial/coffee-art.png" alt="@(copy == 0 ? "Cà phê trong ánh nắng ấm" : "")" loading="lazy" width="280" height="280"/></figure>
+}
+}
+</div>
+}
+</div></div>
+<button type="button" class="cf-reel-toggle" aria-pressed="false" aria-label="Tạm dừng hoặc tiếp tục chuyển ảnh"><span aria-hidden="true">Ⅱ</span></button>
+</div>

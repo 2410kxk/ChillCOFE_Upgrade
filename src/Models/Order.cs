@@ -6,6 +6,12 @@ namespace QuanLiQuanCaffee.Models
     {
         [Key]
         public int OrderID { get; set; }
+        public bool IsOnline { get; set; }
+        public DateTime? PaidAt { get; set; }
+        public DateTime? DeliveredAt { get; set; }
+        [MaxLength(36)] public string? CheckoutKey { get; set; }
+        public int? CafeCustomerId { get; set; }
+        public CafeCustomer? CafeCustomer { get; set; }
 
         public int? TableID { get; set; }
         public Table? Table { get; set; }

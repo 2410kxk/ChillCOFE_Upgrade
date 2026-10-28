@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using QuanLiQuanCaffee.Models;
 
+[AutoValidateAntiforgeryToken]
 public class AccountController : Controller
 {
     private readonly UserManager<IdentityUser> _userManager;
@@ -35,7 +36,8 @@ public class AccountController : Controller
         if (result.Succeeded)
         {
             // GÁN ROLE CUSTOMER
-            await _userManager.AddToRoleAsync(user, "User");
+            var assigned = await _userManager.AddToRoleAsync(user, "User");
+            if (!assigned.Succeeded) { await _userManager.DeleteAsync(user); ViewBag.Error="Chưa thể tạo tài khoản. Vui lòng thử lại."; return View(); }
 
             await _signInManager.SignInAsync(user, false);
             return RedirectToAction("Index", "Home");

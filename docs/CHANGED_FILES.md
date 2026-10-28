@@ -1,26 +1,21 @@
-# File mới hoặc thay đổi
+# File cần chép vào dự án
 
-- Controllers/CafeController.cs
-- Controllers/CatalogAdminController.cs
-- Controllers/HomeController.cs
-- Controllers/OrderController.cs
-- Controllers/PosController.cs
-- Controllers/ProductController.cs
-- Models/Category.cs
-- Models/OrderDetail.cs
-- Models/Product.cs
-- Models/Table.cs
-- ViewModels/CafeViewModels.cs
-- Views/Cafe/Menu.cshtml
-- Views/CatalogAdmin/Index.cshtml
-- Views/Home/Index.cshtml
-- Views/Pos/Index.cshtml
-- Views/Pos/Receipt.cshtml
-- Views/Pos/Tables.cshtml
-- Views/Product/Create.cshtml
-- Views/Product/Details.cshtml
-- Views/Product/Edit.cshtml
-- Views/Shared/_ChillProduct.cshtml
-- Views/Shared/_Layout.cshtml
-- wwwroot/css/chill.css
-- wwwroot/js/chill.js
+| File | Thao tác |
+|---|---|
+| src/Controllers/ApiDashboardController.cs | Thêm mới |
+| src/Controllers/CategoriesApiController.cs | Thêm mới |
+| src/Controllers/CustomersApiController.cs | Thêm mới |
+| src/Controllers/PosController.cs | Thay thế |
+| src/Controllers/ProductsApiController.cs | Thêm mới |
+| src/Controllers/StatisticsApiController.cs | Thêm mới |
+| src/Controllers/TablesApiController.cs | Thêm mới |
+| src/Models/AppDbContext.cs | Thay thế |
+| src/Models/CafeCustomer.cs | Thêm mới |
+| src/Models/Order.cs | Thay thế |
+| src/Program.cs | Thay thế |
+| src/Views/ApiDashboard/Index.cshtml | Thêm mới |
+| src/wwwroot/css/api-dashboard.css | Thêm mới |
+| src/wwwroot/js/api-dashboard.js | Thêm mới |
+| src/wwwroot/js/swagger-auth.js | Thay thế |
+
+Thêm database/05_api_customers.sql, database/06_verify_api.sql và các tài liệu trong docs. Không thay csproj, appsettings, ảnh sản phẩm hoặc các controller khác.

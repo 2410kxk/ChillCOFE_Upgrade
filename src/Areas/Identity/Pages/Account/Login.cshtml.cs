@@ -1,4 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
+// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
@@ -111,11 +111,13 @@ namespace QuanLiQuanCaffee.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+                var account = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
+                var result = account == null ? Microsoft.AspNetCore.Identity.SignInResult.Failed :
+                    await _signInManager.PasswordSignInAsync(account, Input.Password, Input.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
-                    return LocalRedirect(returnUrl);
+                    return LocalRedirect(Url.IsLocalUrl(returnUrl) ? returnUrl : "/");
                 }
                 if (result.RequiresTwoFactor)
                 {
@@ -128,7 +130,7 @@ namespace QuanLiQuanCaffee.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Email hoặc mật khẩu chưa đúng.");
                     return Page();
                 }
             }

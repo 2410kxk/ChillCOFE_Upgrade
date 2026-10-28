@@ -1,0 +1,2 @@
+@model QuanLiQuanCaffee.Models.Order
+<ul class="online-order-lines">@foreach(var line in Model.Details){<li><strong>@(line.Product?.Name??"Món đã xóa") × @line.Quantity</strong> — @((line.Price*line.Quantity).ToString("N0")) đ<br/><small>Size @line.Size · Đường @line.Sugar% · Đá @line.Ice% · @line.Topping</small>@if(!string.IsNullOrWhiteSpace(line.Note)){<p>@line.Note</p>}</li>}</ul>

@@ -68,6 +68,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQWRtaW5cSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/ApiDashboard/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQXBpRGFzaGJvYXJkXEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Cafe/Menu.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcQ2FmZVxNZW51LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -110,6 +114,26 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Info/News.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5mb1xOZXdzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Notifications/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTm90aWZpY2F0aW9uc1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Notifications/Manage.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcTm90aWZpY2F0aW9uc1xNYW5hZ2UuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Online/Deliveries.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT25saW5lXERlbGl2ZXJpZXMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Online/History.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT25saW5lXEhpc3RvcnkuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Online/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcT25saW5lXEluZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Order/Cart.cshtml]
@@ -176,6 +200,22 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZHVjdFxNZW51LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Profile/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsZVxJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Profile/Password.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUHJvZmlsZVxQYXNzd29yZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Reviews/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmV2aWV3c1xFZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Reviews/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcUmV2aWV3c1xJbmRleC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -192,12 +232,24 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9DaGlsbFByb2R1Y3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Shared/_DrinkReel.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Ecmlua1JlZWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Shared/_LoginPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Mb2dpblBhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
+[D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Shared/_OnlineLines.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9PbmxpbmVMaW5lcy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
 [D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Shared/_WorkspaceNav.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9Xb3Jrc3BhY2VOYXYuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Shift/Index.cshtml]
@@ -210,6 +262,10 @@ build_metadata.AdditionalFiles.CssScope =
 
 [D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Statistics/Revenue.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3RhdGlzdGljc1xSZXZlbnVlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/StoreSettings/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU3RvcmVTZXR0aW5nc1xJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [D:/QLDA CNTT/ChillCOFE_Upgrade/src/Views/Table/Index.cshtml]

@@ -9,7 +9,12 @@ namespace QuanLiQuanCaffee.Models
         {
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 
-            optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=CoffeeShopDB;Trusted_Connection=True;TrustServerCertificate=True");
+            var config = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: true).AddUserSecrets<AppDbContextFactory>()
+                .AddEnvironmentVariables().Build();
+            var connection = config.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrWhiteSpace(connection)) throw new InvalidOperationException("Chưa có ConnectionStrings:DefaultConnection. Cấu hình User Secrets trước khi dùng EF.");
+            optionsBuilder.UseSqlServer(connection);
 
             return new AppDbContext(optionsBuilder.Options);
         }

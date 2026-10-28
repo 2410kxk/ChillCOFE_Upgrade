@@ -6,9 +6,9 @@
     DateTime startOfWeek = selectedDate.AddDays(-1 * diff);
 }
 
-<div class="container mt-4">
+<section class="ux-page ux-schedule"><header class="ux-page-head"><div><p class="lx-kicker">ĐỘI NGŨ / LỊCH LÀM VIỆC</p><h1>Một tuần làm việc nhịp nhàng.</h1><p class="ux-subtitle">Phân ca và xem lịch theo tuần.</p></div><div class="ux-head-actions"></div></header><div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3 class="fw-bold text-danger mb-0">BẢNG PHÂN CA LÀM VIỆC TUẦN - Chill COFÉ</h3>
+        <h3 class="fw-bold text-danger mb-0">Lịch làm việc tuần</h3>
         <div>
             <button class="btn btn-success me-2" onclick="exportSchedule()">
                 <i class="bi bi-download"></i> Tải ảnh gửi NV
@@ -24,7 +24,7 @@
             <h5 class="fw-bold text-uppercase">Lịch làm việc từ ngày @startOfWeek.ToString("dd/MM") đến @startOfWeek.AddDays(6).ToString("dd/MM")</h5>
         </div>
 
-        <table class="table table-bordered text-center align-middle" id="scheduleTable">
+        <div class="table-responsive"><table class="table table-bordered text-center align-middle" id="scheduleTable">
             <thead class="table-dark">
                 <tr>
                     <th style="width: 120px;">CA / THỨ</th>
@@ -55,36 +55,39 @@
                                 <div class="shift-cell-content">
                                     @foreach (var s in Model.Where(s => s.Date.Date == currentDay && s.ShiftNumber == i))
                                     {
-                                        var badgeClass = s.Employee.Position == "Pha chế" ? "bg-info" : "bg-warning";
-                                        <div class="badge @badgeClass text-dark p-2 mb-1 d-block text-truncate border" title="@s.Employee.FullName">
-                                            @s.Employee.FullName
+                                        var badgeClass = s.Employee?.Position == "Pha chế" ? "bg-info" : "bg-warning";
+                                        <div class="badge @badgeClass text-dark p-2 mb-1 d-block text-truncate border" title="@(s.Employee?.FullName ?? "Nhân viên không còn")">
+                                            @(s.Employee?.FullName ?? "Nhân viên không còn")
                                         </div>
                                     }
                                 </div>
 
                                 <button class="btn btn-sm btn-outline-primary mt-1 d-print-none rounded-circle"
                                         onclick="openAssignModal(@i, '@currentDay.ToString("yyyy-MM-dd")')">
-                                    <i class="bi bi-plus"></i>
+                                    <span aria-hidden="true">+</span><span class="visually-hidden">Phân ca</span>
                                 </button>
                             </td>
                         }
                     </tr>
                 }
             </tbody>
-        </table>
+        </table></div>
     </div>
 </div>
 
+</section>
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+function uiEscape(value){const span=document.createElement('span');span.textContent=String(value ?? '');return span.innerHTML.replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+
         function exportSchedule() {
             const area = document.getElementById('capture-area');
             html2canvas(area, { scale: 2 }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'Lich_Lam_Viec_Pho_Coffe.png';
+                link.download = 'Lich_Lam_Viec_ChillCOFE.png';
                 link.href = canvas.toDataURL("image/png");
                 link.click();
             });
@@ -109,9 +112,9 @@
                         <tbody>
                             ${employees.map(e => `
                                 <tr>
-                                    <td><input type="checkbox" class="emp-cb" value="${e.employeeID}" data-role="${e.position}"></td>
-                                    <td>${e.fullName}</td>
-                                    <td><span class="badge ${e.position === 'Pha chế' ? 'bg-info' : 'bg-warning'} text-dark">${e.position}</span></td>
+                                    <td><input type="checkbox" class="emp-cb" value="${uiEscape(e.employeeID)}" data-role="${uiEscape(e.position)}"></td>
+                                    <td>${uiEscape(e.fullName)}</td>
+                                    <td><span class="badge ${e.position === 'Pha chế' ? 'bg-info' : 'bg-warning'} text-dark">${uiEscape(e.position)}</span></td>
                                 </tr>
                             `).join('')}
                         </tbody>

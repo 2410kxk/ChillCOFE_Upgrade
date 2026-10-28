@@ -1,39 +1,4 @@
 @model QuanLiQuanCaffee.Models.Employee
-
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card shadow border-warning">
-            <div class="card-header bg-warning text-dark text-center">
-                <h4>CẬP NHẬT THÔNG TIN</h4>
-            </div>
-            <div class="card-body">
-                <form asp-action="Edit">
-                    <input type="hidden" asp-for="EmployeeID" />
-                    <div class="mb-3">
-                        <label class="form-label">Họ và Tên</label>
-                        <input asp-for="FullName" class="form-control" required />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Vị trí</label>
-                        <select asp-for="Position" class="form-select">
-                            <option value="Pha chế">Pha chế</option>
-                            <option value="Phục vụ">Phục vụ</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Số điện thoại</label>
-                        <input asp-for="Phone" class="form-control" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Lương mỗi giờ (VND)</label>
-                        <input asp-for="HourlyRate" class="form-control" type="number" />
-                    </div>
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-primary flex-grow-1">Cập nhật</button>
-                        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+@{ ViewData["Title"] = "Cập nhật hồ sơ nhân viên"; }
+<section class="ux-page"><header class="ux-page-head"><div><p class="lx-kicker">ĐỘI NGŨ / NHÂN VIÊN</p><h1>Cập nhật hồ sơ nhân viên</h1><p class="ux-subtitle"></p></div><div class="ux-head-actions"></div></header><div class="ux-form-layout"><form asp-action="Edit" method="post" class="ux-panel"><div asp-validation-summary="All" class="text-danger" role="alert"></div><input type="hidden" asp-for="EmployeeID"/><h2>Thông tin nhân viên</h2><div class="ch-field"><label asp-for="FullName">Họ và tên</label><input asp-for="FullName" required autocomplete="name"/><span asp-validation-for="FullName" class="text-danger"></span></div><div class="ch-field"><label asp-for="Position">Vị trí làm việc</label><select asp-for="Position"><option value="Pha chế">Pha chế</option><option value="Phục vụ">Phục vụ</option><option value="Quản lý">Quản lý</option></select></div><div class="ch-field-row"><div class="ch-field"><label asp-for="Phone">Số điện thoại</label><input asp-for="Phone" type="tel" autocomplete="tel"/></div><div class="ch-field"><label asp-for="HourlyRate">Lương mỗi giờ (đ)</label><input asp-for="HourlyRate" type="number" min="0"/><span asp-validation-for="HourlyRate" class="text-danger"></span></div></div><div class="ux-form-actions"><button type="submit" class="lx-button">Lưu hồ sơ </button><a asp-action="Index" class="lx-text-link">Về danh sách</a></div></form><aside class="ux-panel ux-note-panel"><p class="lx-kicker">PEOPLE OF CHILL</p><h2>Một đội ngũ.<br>Nhiều điều tốt đẹp.</h2><p>Kiểm tra họ tên, thông tin liên hệ và mức lương trước khi lưu.</p><hr/><p>Phân ca cho nhân viên tại mục Lịch làm việc sau khi hoàn tất hồ sơ.</p><a href="/Shift" class="lx-text-link">Xem lịch làm việc </a></aside></div></section>
+@section Scripts { <partial name="_ValidationScriptsPartial"/> }

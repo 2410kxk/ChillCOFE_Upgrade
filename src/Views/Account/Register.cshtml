@@ -1,20 +1,2 @@
-<div class="container mt-5" style="max-width:500px">
-    <div class="card p-4 shadow-lg">
-
-        <h3 class="text-center text-danger mb-3">ĐĂNG KÝ</h3>
-
-        <form method="post">
-            <input name="username" class="form-control mb-3" placeholder="Tên tài khoản" />
-            <input name="email" class="form-control mb-3" placeholder="Email" />
-            <input name="password" type="password" class="form-control mb-3" placeholder="Mật khẩu" />
-
-            <button class="btn btn-danger w-100">Đăng ký</button>
-        </form>
-
-        <p class="text-center mt-3">
-            Đã có tài khoản?
-            <a href="/Identity/Account/Login">Đăng nhập</a>
-        </p>
-
-    </div>
-</div>
+@{ ViewData["Title"] = "Bắt đầu một khoảng chill."; }
+<section class="ux-page"><header class="ux-page-head"><div><p class="lx-kicker">CHILL COFÉ / ĐĂNG KÝ</p><h1>Bắt đầu một khoảng chill.</h1><p class="ux-subtitle"></p></div><div class="ux-head-actions"></div></header><div class="ux-auth"><div class="ux-auth-art"><img src="/images/editorial/coffee-art.png" alt="Cà phê trong nắng ấm"/><p>Một chút cà phê.<br>Một khoảng bình yên.</p></div><form method="post" class="ux-auth-form">@Html.AntiForgeryToken()<h2>Tạo tài khoản</h2><div asp-validation-summary="All" class="text-danger"></div><div class="ch-field"><label for="username">Tên tài khoản</label><input id="username" name="username" autocomplete="username" required/></div><div class="ch-field"><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" required/></div><div class="ch-field"><label for="password">Mật khẩu</label><input id="password" name="password" type="password" autocomplete="new-password" required/></div><button class="lx-button" type="submit">Đăng ký </button><p class="ux-help">Đã có tài khoản? <a href="/Identity/Account/Login">Đăng nhập</a></p></form></div></section>
